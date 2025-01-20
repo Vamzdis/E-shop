@@ -17,7 +17,7 @@ class Product(db.Model):
 
     cart_items = db.relationship("CartItem", back_populates="product")
     order_items = db.relationship("OrderItem", back_populates="product")
-    rating = db.relationship("Rating",back_populates="product")
+    ratings = db.relationship("Rating",back_populates="product")
 
 
     def __init__(self, name, description, price, picture, quantity, is_available, is_deleted, created_on):

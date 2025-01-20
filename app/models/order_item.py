@@ -1,7 +1,7 @@
 from app.database import db
 
 class Order_items(db.Model):
-    __tablename__ = 'orders'
+    __tablename__ = 'orders_items'
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     order_id = db.Column(db.Integer, db.ForeignKey("orders.id"))
     product_id = db.Column(db.Integer, db.ForeignKey("products.id"))
