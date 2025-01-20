@@ -22,7 +22,7 @@ def create_app():
     migrate.init_app(app,db)
 
     app.register_blueprint(shop_routes.bp)
-    app.register_blueprint(user_routes.bp)
+    app.register_blueprint(user_routes.user_routes)
 
     return app
 
