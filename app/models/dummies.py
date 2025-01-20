@@ -1,3 +1,4 @@
+#THIS SHOULD NOT BE CUSTOM, THIS SHOULD BE FROM MODELS! It's here just for testing product listing from font-end
 class Product():
 
     def __init__(self, name, description, price, picture, quantity, rating):
