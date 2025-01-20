@@ -10,6 +10,7 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable = False)
     picture = db.Column(db.String(255), nullable = False)
     quantity = db.Column(db.Integer, nullable = False)
+    rating = db.Column(db.Float, nullable = True)
     is_available = db.Column(db.Boolean, default = False, nullable = False)
     is_deleted = db.Column(db.Boolean, default = False, nullable = False)
     created_on = db.Column(db.DateTime, default = func.now())
