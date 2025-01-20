@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}E-shop{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/styles.css') }}">
+</head>
+<body>
+
+<header>
+    <div class="header_container">
+        <h1>FTWT shop</h1>
+        <div class="header_buttons">
+            <button type="button" class="btn btn-primary btn-sm">Login/Register</button>
+            <button type="button" class="btn btn-primary btn-sm">My cart</button>
+        </div>
+    </div>
+</header>
+
+<div class="content">
+    {% block content %} {% endblock %}
+</div>
+<footer>
+    <p>FTWT E-shop project &copy; 2025</p>
+</footer>
+
+</body>
+</html>
