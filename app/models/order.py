@@ -1,18 +1,16 @@
 from app.database import db
-from father import Father
 from datetime import datetime
+from sqlalchemy import func
 
-
-
-class Order(Father):
+class Order(db.Model):
     __tablename__ = 'orders'
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     purchase_price = db.Column(db.Float, nullable=False)
+    created_on = db.Column(db.DateTime, default = func.now())
 
 
-    def __init__(self, id : int, user_id : int, purchase_price : float, created_on: datetime):
-        super().__init__(created_on)
+    def __init__(self, id : int, user_id : int, purchase_price : float, created_on : datetime=None):
         self.id = id
         self.user_id = user_id
         self.purchase_price = purchase_price

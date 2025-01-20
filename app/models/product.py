@@ -1,7 +1,7 @@
 from app.database import db
-from father import Father
+from sqlalchemy import func
 
-class Product(Father):
+class Product(db.Model):
     __tablename__ = 'products'
 
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
@@ -11,16 +11,16 @@ class Product(Father):
     quantity = db.Column(db.Integer, nullable = False)
     is_available = db.Column(db.Boolean, default = False, nullable = False)
     is_deleted = db.Column(db.Boolean, default = False, nullable = False)
+    created_on = db.Column(db.DateTime, default = func.now())
 
-
-    def __init__(self, name, description, price, is_available, is_deleted, quantity, created_on):
-        super().__init__(created_on)
+    def __init__(self, name, description, price, is_available, is_deleted, quantity, created_on = None):
         self.name = name
         self.description = description
         self.price = price
         self.is_available = is_available
         self.is_deleted = is_deleted
         self.quantity = quantity
+        self.created_on = created_on
 
     def __repr__(self):
         return f" Product: {self.name}, price - {self.price}, description - {self.description}"
