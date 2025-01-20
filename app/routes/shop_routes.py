@@ -4,12 +4,13 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from app.database import db
 
 from app.models.product import Product
+from app.models.dummies import dummy_products
 
 bp = Blueprint('shop', __name__)
 
 @bp.route('/')
 def show():
 
-    products = []
+    products = dummy_products
 
     return render_template("products_extends_base.html", products=products)
