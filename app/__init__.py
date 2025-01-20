@@ -1,8 +1,7 @@
-from flask import Flask as fl, render_template
+from flask import Flask as fl
 import config as cfg
 
-#making a note that routes will have to be imported here and blueprints will need to be setup
-# from app.routes import route file
+from app.routes import shop_routes
 
 def create_app():
     app = fl(__name__, static_folder='templates/static')
@@ -12,8 +11,7 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app,db)
 
-    #after route import this will be something like
-    # app.register_blueprint(route file.bp)
+    app.register_blueprint(shop_routes.bp)
     app.register_blueprint()
 
     return app
