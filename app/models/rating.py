@@ -1,5 +1,5 @@
 from app.database import db
-from father import Father
+from app.models.father import Father
 
 class Rating(Father):
     __tablename__ = 'ratings'

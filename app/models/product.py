@@ -1,5 +1,5 @@
 from app.database import db
-from father import Father
+from app.models.father import Father
 
 class Product(Father):
     __tablename__ = 'products'
@@ -11,6 +11,10 @@ class Product(Father):
     quantity = db.Column(db.Integer, nullable = False)
     is_available = db.Column(db.Boolean, default = False, nullable = False)
     is_deleted = db.Column(db.Boolean, default = False, nullable = False)
+
+    cart_items = db.relationship("CartItem", back_populated="product")
+    order_items = db.relationship("OrderItem", back_populates="product")
+    rating = db.relationship("Rating",back_populated="product")
 
 
     def __init__(self, name, description, price, is_available, is_deleted, quantity, created_on):

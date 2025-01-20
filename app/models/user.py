@@ -1,5 +1,5 @@
 from app.database import db
-from father import Father
+from app.models.father import Father
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -17,6 +17,12 @@ class User(Father):
     is_active = db.Column(db.Boolean, default=True, nullable = False)
     failed_login_count = db.Column(db.Integer, default=3)
     block_until = db.Column(db.DateTime, nullable = True)
+
+    transactions = db.relationship("Transaction", back_populates="user")
+    products_cart = db.relationship("ProductCart", back_populates="user")
+    orders = db.relationship("Order", back_populates="user")
+    ratings = db.relationship("Rating", back_populates="user")
+
 
 
 #I cant thing of a scenario where we would need to specify balance when creating it so I'm not adding it to init method
