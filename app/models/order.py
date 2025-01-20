@@ -9,6 +9,9 @@ class Order(db.Model):
     purchase_price = db.Column(db.Float, nullable=False)
     created_on = db.Column(db.DateTime, default = func.now())
 
+    user = db.relationship("User", back_populates="orders")
+    order_items = db.relationship("OrderItem", back_populates="order")
+
 
     def __init__(self, id : int, user_id : int, purchase_price : float, created_on : datetime=None):
         self.id = id

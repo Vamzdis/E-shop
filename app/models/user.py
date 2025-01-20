@@ -18,6 +18,12 @@ class User(db.Model):
     block_until = db.Column(db.DateTime, nullable = True)
     created_on = db.Column(db.DateTime, default = func.now())
 
+    transactions = db.relationship("Transaction", back_populates="user")
+    products_cart = db.relationship("ProductCart", back_populates="user")
+    orders = db.relationship("Order", back_populates="user")
+    ratings = db.relationship("Rating", back_populates="user")
+
+
 
 #I cant thing of a scenario where we would need to specify balance when creating it so I'm not adding it to init method
     def __init__(self, name : str, email : str, password : str, block_until :datetime, created_on : datetime = None):
