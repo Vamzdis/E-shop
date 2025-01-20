@@ -4,10 +4,12 @@ from datetime import datetime
 class CartItem(db.Model):
     __tablename__ = 'cart_items'
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    products_cart_id = db.Column(db.Integer, db.ForeignKey('product_carts.id'))
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'))
     quantity = db.Column(db.Integer, nullable = False)
 
-    product_cart = db.relationship("ProductCart", back_populates = "cart_items")
-    product_cart_id = db.relationship("Product", back_populates = "cart_items")
+    product_carts = db.relationship('ProductCart', back_populates='cart_items')
+    product = db.relationship('Product', back_populates='cart_items')
     
     def __init__(self, quantity : int):
         self.quantity = quantity

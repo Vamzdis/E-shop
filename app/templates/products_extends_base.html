@@ -6,15 +6,27 @@
     <div class="container">
 
         <div class="row">
-          <div class="col-sm">
-            One of three columns
-          </div>
-          <div class="col-sm">
-            One of three columns
-          </div>
-          <div class="col-sm">
-            One of three columns
-          </div>
+
+            {% for product in products %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <!-- UPDATE THIS! When we get proper image address-->
+                    <img src="https://demofree.sirv.com/nope-not-here.jpg" class="card-img-top" alt="{{ product.name }}">
+                    <div class="card-body">
+
+                        <h5 class="card-title">{{ product.name }}</h5>
+
+                        <p class="card-text text-muted">Price: ${{ product.price }}</p>
+
+                    <!-- UPDATE THIS! When we will have proper rating-->
+                        <p class="card-text text-muted">Rating: ${{ product.rating }}</p>
+                    </div>
+                    <div class="card-footer">
+
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
 
       </div>
