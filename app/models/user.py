@@ -18,17 +18,15 @@ class User(db.Model):
     block_until = db.Column(db.DateTime, nullable = True)
     created_on = db.Column(db.DateTime, default = func.now())
 
-    transactions = db.relationship("Transaction", back_populates="user")
-    product_carts = db.relationship("ProductCart", back_populates="user")
-    orders = db.relationship("Order", back_populates="user")
-    ratings = db.relationship("Rating", back_populates="user")
-
-
+    transactions = db.relationship("Transaction", back_populates="user", cascade = "all,delete")
+    products_carts = db.relationship("ProductCart", back_populates="user", cascade = "all,delete")
+    orders = db.relationship("Order", back_populates="user", cascade = "all,delete")
+    ratings = db.relationship("Rating", back_populates="user", cascade = "all,delete")
 
 #I cant thing of a scenario where we would need to specify balance when creating it so I'm not adding it to init method
-    def __init__(self, name : str, email : str, password : str, block_until :datetime, created_on : datetime = None):
+    def __init__(self, name : str, login_email : str, password : str, block_until :datetime, created_on : datetime = None):
         self.name = name
-        self.email = email
+        self.login_email= login_email
         self.password = password #when does password hashing happen? probably outside the class
         self.block_until = block_until
         self.created_on = created_on

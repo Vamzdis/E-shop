@@ -17,6 +17,5 @@ class Order_items(db.Model):
         self.purchase_price = purchase_price
 
 
-
     def __repr__(self):
         pass

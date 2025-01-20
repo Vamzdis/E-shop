@@ -8,6 +8,7 @@ class Product(db.Model):
     name = db.Column(db.String(255), nullable = False)
     description = db.Column(db.String(255), nullable = False)
     price = db.Column(db.Float, nullable = False)
+    picture = db.Column(db.String(255), nullable = False)
     quantity = db.Column(db.Integer, nullable = False)
     is_available = db.Column(db.Boolean, default = False, nullable = False)
     is_deleted = db.Column(db.Boolean, default = False, nullable = False)
@@ -18,11 +19,11 @@ class Product(db.Model):
     ratings = db.relationship("Rating",back_populates="product")
 
 
-    def __init__(self, name, description, price, is_available, is_deleted, quantity, created_on):
-        super().__init__(created_on)
+    def __init__(self, name, description, price, picture, quantity, is_available, is_deleted, created_on):
         self.name = name
         self.description = description
         self.price = price
+        self.picture = picture
         self.is_available = is_available
         self.is_deleted = is_deleted
         self.quantity = quantity
