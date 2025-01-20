@@ -24,10 +24,11 @@ class User(db.Model):
     ratings = db.relationship("Rating", back_populates="user", cascade = "all,delete")
 
 #I cant thing of a scenario where we would need to specify balance when creating it so I'm not adding it to init method
-    def __init__(self, name : str, login_email : str, password : str, block_until :datetime, created_on : datetime = None):
+    def __init__(self, name : str, last_name: str, login_email : str, password : str, block_until : datetime = None, created_on : datetime = None):
         self.name = name
+        self.last_name = last_name
         self.login_email= login_email
-        self.password = password #when does password hashing happen? probably outside the class
+        self.password = password 
         self.block_until = block_until
         self.created_on = created_on
 
