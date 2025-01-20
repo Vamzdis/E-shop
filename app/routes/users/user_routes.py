@@ -3,10 +3,24 @@ from app.database import db
 from app.models.user import User
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from flask_wtf import FlaskForm 
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired, Length, Email, EqualTo
+
+class RegistrationForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=3, max=20)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Register')
+
 bp = Blueprint('users', __name__)
 
 @bp.route('/register', methods = ['GET','POST'])
 def register():
+
+    form=RegistrationForm()
+
     if request.method == 'GET':
         user_email = request.form.get('user_email')
         password = request.form.get('password')
@@ -27,7 +41,7 @@ def register():
 
         return redirect(url_for('login'))
 
-    return render_template('create_user.html')
+    return render_template('create_user.html', form = form)
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
