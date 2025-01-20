@@ -7,7 +7,7 @@ class Order_items(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey("products.id"))
     quantity = db.Column(db.Integer, nullable = False)
 
-    order = db.relationship("Order", back_populated="order_items")
+    order = db.relationship("Order", back_populates="order_items")
     product = db.relationship("Product", back_populates="order_items")
 
 
@@ -15,7 +15,6 @@ class Order_items(db.Model):
         self.id = id
         self.user_id = user_id
         self.purchase_price = purchase_price
-
 
 
     def __repr__(self):
