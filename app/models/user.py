@@ -19,7 +19,7 @@ class User(db.Model):
     created_on = db.Column(db.DateTime, default = func.now())
 
     transactions = db.relationship("Transaction", back_populates="user")
-    products_cart = db.relationship("ProductCart", back_populates="user")
+    product_carts = db.relationship("ProductCart", back_populates="user")
     orders = db.relationship("Order", back_populates="user")
     ratings = db.relationship("Rating", back_populates="user")
 

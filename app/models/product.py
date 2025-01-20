@@ -13,9 +13,9 @@ class Product(db.Model):
     is_deleted = db.Column(db.Boolean, default = False, nullable = False)
     created_on = db.Column(db.DateTime, default = func.now())
 
-    cart_items = db.relationship("CartItem", back_populated="product")
+    cart_items = db.relationship("CartItem", back_populates="product")
     order_items = db.relationship("OrderItem", back_populates="product")
-    rating = db.relationship("Rating",back_populated="product")
+    ratings = db.relationship("Rating",back_populates="product")
 
 
     def __init__(self, name, description, price, is_available, is_deleted, quantity, created_on):
