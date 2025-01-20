@@ -1,4 +1,12 @@
-from app.models.product import Product
+class Product():
+
+    def __init__(self, name, description, price, picture, quantity, rating):
+        self.name = name
+        self.description = description
+        self.price = price
+        self.picture = picture
+        self.quantity = quantity
+        self.rating = rating
 
 dummy_products = [
     Product(
