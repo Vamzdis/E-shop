@@ -70,7 +70,7 @@ def dashboard():
 def admin_dashboard():
     if not current_user.is_admin:
         return redirect(url_for('users.dashboard'))
-    return "Admin Dashboard!" #This can be changed to something more likeable
+    return render_template('admin_dashboard.html') #This can be changed to something more likeable
 
 
 @user_routes.route('/user_dashboard')
@@ -78,4 +78,4 @@ def admin_dashboard():
 def user_dashboard():
     if current_user.is_admin:
         return redirect(url_for('users.admin_dashboard'))
-    return "User Dashboard!" #This can be changed to something more likeable
+    return render_template('user_dashboard.html') #This can be changed to something more likeable
