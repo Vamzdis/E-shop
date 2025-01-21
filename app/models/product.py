@@ -16,7 +16,7 @@ class Product(db.Model):
     created_on = db.Column(db.DateTime, default = func.now())
 
     cart_items = db.relationship("CartItem", back_populates="product")
-    order_items = db.relationship("OrderItem", back_populates="product")
+    order_items = db.relationship("Order_items", back_populates="product")
     ratings = db.relationship("Rating",back_populates="product")
 
 

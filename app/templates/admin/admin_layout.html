@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <script src="https://kit.fontawesome.com/e90760b12c.js" crossorigin="anonymous"></script>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <!-- jQuery (jau įtraukta), DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+ 
+    <title>{% block title %}FTWT Shop{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <div class="container nav-bar">
+                <a class="nav-link" href="{{ url_for('admin.index') }}" >
+                    <i class="fa-solid fa-gauge-high"></i> Dashboard
+                </a>
+                <a class="nav-link" href="{{ url_for('admin.list_products') }}">
+                    <i class="fa-solid fa-cart-shopping"></i> Products  
+                </a>
+                <a class="nav-link" href="#">
+                    <i class="fa-solid fa-users"></i> Users  
+                </a>
+                <a class="nav-link" href="#">
+                    <i class="fa-solid fa-list"></i> Orders  
+                </a>
+                <a class="nav-link" href="#">
+                    <i class="fa-solid fa-money-bill-transfer"></i> Transactions  
+                </a>
+                <a class="nav-link" href="{{ url_for('shop.show') }}">
+                    <i class="fa-solid fa-globe"></i> View Website  
+                </a>  
+                <a class="nav-link" href="#">
+                    <i class="fa-solid fa-right-to-bracket"></i> Logout
+                </a>  
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+</body>
+<script>
+    $(document).ready(function() {
+        $('#productTable').DataTable({
+            "order": [[ 3, "asc" ]],  // Rikiuoti pagal kainą (4-oji kolona, pradedant nuo 0)
+            "paging": true,           // Įjungti puslapiavimą
+            "searching": true,        // Įjungti paiešką
+            "columnDefs": [
+                { "orderable": false, "targets": 0 } // Išjungti rikiavimą pirmame stulpelyje (Actions)
+            ]
+        });
+    });
+</script>
+ 
+</html>
