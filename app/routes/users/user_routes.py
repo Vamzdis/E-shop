@@ -30,7 +30,7 @@ def register():
     if form.validate_on_submit():
         name = form.name.data
         surname = form.surname.data
-        email = form.email.data
+        login_email = form.email.data
         password = form.password.data
 
         if User.query.filter(User.login_email == login_email).first():
@@ -42,7 +42,7 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
-        flash(f"Welcome {name}! Your registration is successfu, you can now log in")
+        flash(f"Welcome {name}! Your registration is successful, you can now log in")
         return redirect(url_for('users.login'))
       
     return render_template('user_register_extends_base.html', form=form)
