@@ -82,7 +82,7 @@ def add_product():
 
 @admin.route("/list_products")
 def list_products():
-    products = Product.query.all()
+    products = Product.query.filter_by(is_deleted = False).all()
     return render_template("admin/product_list.html", products=products)    #add template
 
 
@@ -91,14 +91,15 @@ def delete_product(id):
     product = Product.query.get(id)
 
     if not product:
-        return "Product not found", 404
+        flash('Product not found','danger')
+        return redirect(request.url)
 
     if request.method == "POST":
         product.is_deleted = True
         db.session.commit()
-        return redirect(url_for("..."))         #add template
+        return redirect(url_for("admin.list_products"))         #add template
     else:
-        return render_template("...", product=product)      #add template
+        return render_template("admin/product_list.html", product=product)      #add template
 
 
 @admin.route("/edit_product/<int:id>", methods = ["GET", "POST"])
@@ -140,7 +141,7 @@ def edit_product(id):
 
 @admin.route("/list_users")
 def list_users():
-    users = Product.query.all()
+    users = User.query.all()
     return render_template("...", users=users)      #add template
 
 
