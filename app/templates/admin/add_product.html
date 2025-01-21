@@ -1,0 +1,40 @@
+{%extends "/admin/admin_layout.html" %}
+{% block title %} Products {% endblock %}
+{% block content %}
+<h2 class="text-center my-3">Add a New Product</h2>
+            <form action="{{ url_for('admin.add_product') }}" method="post">
+                <div class="row">
+                    <div class="form-group col-md-6 mb-6">
+                        <label>Product Title</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="form-group col-md-6 mb-6">
+                        <label>Product Price </label>
+                        <input type="number" class="form-control" id="genre" name="genre" required>
+                    </div>
+                    <div class="form-group col-md-6 mb-6">
+                        <label>Product Qty </label>
+                        <input type="text" class="form-control" id="genre" name="genre" required>
+                    </div>
+                    <div class="form-group col-md-6 mb-6">
+                        <label>Product Image </label>
+                        <input type="file" class="form-control" id="genre" name="genre" required>
+                    </div>
+                    <div class="form-group col-md-6 mb-6">
+                        <label for="release_date" class="form-label">Product rating </label>
+                        <input type="number" class="form-control" id="release_date" name="release_date" required>
+                    </div>
+                    <div class="form-group col-md-6 mb-6">
+                        <label>Product Description </label>
+                        <textarea type="text" class="form-control" id="description" name="description" required rows="3"></textarea>
+                    </div>
+                    <div class="form-check col-md-6 mb-6">
+                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                        <label class="form-check-label" for="defaultCheck1">Is Active?</label>
+                      </div>
+                    <div class="form-group col-md-6 mb-6">
+                        <button class="btn btn-primary" type="submit">Add Product</button>
+                    </div>
+                </div>
+            </form>
+{% endblock %}
