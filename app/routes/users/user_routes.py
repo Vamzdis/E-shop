@@ -33,22 +33,18 @@ def register():
         email = form.email.data
         password = form.password.data
 
-        if not email or not password or not name or not surname:
-            return render_template('user_register_extends_base.html', error="All required fields must be filled in!")
-    
-        if User.query.filter(User.login_email == email).first():
-            return render_template('user_register_extends_base.html', error="The email you entered is already registered, please try another one.")
-    
+        if User.query.filter(User.login_email == login_email).first():
+            return render_template('create_user.html', error="The email you entered is already registered, please try another one.")
+        
         password_hash = generate_password_hash(password) 
-        new_user = User(name, surname, email, password_hash)
+        new_user = User(name, surname, login_email, password_hash)
         db.session.add(new_user)
         db.session.commit()
 
         flash("Registration successful! Please log in.")
         return redirect(url_for('users.login'))
-    
+      
     return render_template('user_register_extends_base.html', form=form)
-    
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -58,11 +54,6 @@ def login():
     if form.validate_on_submit():
         login_email = form.email.data
         password = form.password.data
-
-
-    # if request.method == 'POST':
-    #     login_email = request.form.get('email')
-    #     password = request.form.get('password')
 
         user = User.query.filter_by(login_email=login_email).first()
         if user and check_password_hash(user.password, password):
@@ -74,7 +65,8 @@ def login():
             return redirect(url_for('users.dashboard'))
         else:
             return render_template('user_login_extends_base.html', form = form ,error="Invalid email or password entered.")
-
+        
+    return render_template('user_login_extends_base.html', form = form)
 
 @bp.route('/logout')
 @login_required
