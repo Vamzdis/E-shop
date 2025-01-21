@@ -1,0 +1,42 @@
+{% extends "admin/admin_layout.html" %}
+
+{% block title %}All Orders{% endblock %}
+
+{% block content %}
+<h2>All Orders</h2>
+
+{% if orders %}
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>User ID</th>
+            <th>User name</th>
+            <th>Purchase Price</th>
+            <th>Order Date</th>
+            <th>Items</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.user.id }}</td>
+            <td>{{ order.user.name }}</td>    
+            <td>€ {{ order.purchase_price }}</td>
+            <td>{{ order.created_on }}</td>
+            <td>
+                <ul>
+                    {% for item in order.order_items %}
+                    <li>{{ item.product.name }} ({{ item.quantity }})</li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <p>No orders found.</p>
+{% endif %}
+{% endblock %}
