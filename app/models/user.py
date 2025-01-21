@@ -30,8 +30,7 @@ class User(db.Model, UserMixin):
         self.last_name = last_name
         self.login_email= login_email
         self.password = password #when does password hashing happen? probably outside the class
-        self.created_on = created_on
-
-
+        
     def __repr__(self):
         return f"{self.name} id ({self.id})"
+    
