@@ -30,11 +30,11 @@ def register():
     if form.validate_on_submit():
         name = form.name.data
         surname = form.surname.data
-        email = form.email.data
+        login_email = form.email.data
         password = form.password.data
 
         if User.query.filter(User.login_email == login_email).first():
-            flash("The email you've entered ir registered already.")
+            flash("The email you've entered ir registered already")
             return render_template('user_register_extends_base.html', form=form)
         
         password_hash = generate_password_hash(password) 
@@ -42,7 +42,7 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
-        flash(f"Welcome {name}! Your registration is successfu, you can now log in")
+        flash(f"Welcome {name}! Your registration is successful, you can now log in")
         return redirect(url_for('users.login'))
       
     return render_template('user_register_extends_base.html', form=form)
@@ -59,14 +59,14 @@ def login():
         user = User.query.filter_by(login_email=login_email).first()
         if user and check_password_hash(user.password, password):
             if not user.is_active or user.is_deleted:
-                flash("Your account is curently blocked or deleted.")
+                flash("Your account is blocked or deleted")
                 return render_template('user_login_extends_base.html', form = form)
             
             login_user(user)  # user login using flask-login built in function
             flash("Login successful.")
             return redirect(url_for('users.dashboard'))
         else:
-            flash("Invalid email or password entered.")
+            flash("Invalid email or password")
             return render_template('user_login_extends_base.html', form = form)
         
     return render_template('user_login_extends_base.html', form = form)
