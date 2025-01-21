@@ -77,6 +77,10 @@
             {{ form.submit(class="btn btn-primary btn-block") }}
         </div>
     </form>
-
+    <a href="{{ url_for('users.login') }}" >
+        <button class="btn btn-success btn-block">
+            Already have an account? Login here
+        </button>
+    </a>
 
 {% endblock %}
