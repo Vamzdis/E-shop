@@ -2,6 +2,8 @@ from flask import Blueprint, render_template, redirect, url_for, flash, abort
 from sqlalchemy import or_, and_
 from app.database import db
 from app.models.user import User
+from app.models.order import Order
+from app.models.transaction import Transaction
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf import FlaskForm 
@@ -136,20 +138,33 @@ def user_dashboard():
     return render_template('user/user_layout.html') 
 
 
-@bp.route('/user_dashboard/transactions')
+@bp.route('/transactions')
 @login_required
-def user_transactions():
+def show_transactions():
     if current_user.is_admin:
-        return redirect(url_for('users.admin_dashboard'))
-    return render_template('user/user_transactions.html') 
+        transactions = Transaction.query.all()
+        return render_template('admin/view_all_transactions.html', transactions=transactions)  # Admin template
+    else:
+        # Regular user sees only their own orders
+        transactions = Transaction.query.filter_by(user_id=current_user.id).all()
+        return render_template('user/user_transactions.html', transactions=transactions)
 
 @bp.route('/admin/all_users')
 @login_required
 def show_users():
-    # This route is only meant to be accessed by admins
     if not current_user.is_admin:
-        abort(403)  # Forbidden for non-admins
-
-    
+        abort(403)   
     users = User.query.all()
     return render_template('admin/view_users.html', users=users)
+
+@bp.route('/orders')
+@login_required
+def show_orders():
+    if current_user.is_admin:
+        # Admin sees all orders
+        orders = Order.query.all()
+        return render_template('admin/view_orders.html', orders=orders)  # Admin template
+    else:
+        # Regular user sees only their own orders
+        orders = Order.query.filter_by(user_id=current_user.id).all()
+        return render_template('user/view_orders.html', orders=orders)
