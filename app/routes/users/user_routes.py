@@ -65,10 +65,6 @@ def register():
         surname = form.surname.data
         login_email = form.email.data
         password = form.password.data
-
-        # if User.query.filter(User.login_email == login_email).first():
-        #     flash("The email you've entered ir registered already")
-        #     return render_template('user_register_extends_base.html', form=form)
         
         password_hash = generate_password_hash(password) 
         new_user = User(name, surname, login_email, password_hash)
@@ -96,10 +92,6 @@ def login():
                 form.email.errors.append("This account is blocked or deleted.")
                 return render_template('login.html', form=form)
             
-            # if not user.is_active or user.is_deleted:
-            #     flash("Your account is blocked or deleted")
-            #     return render_template('user_login_extends_base.html', form = form)
-            
             login_user(user)  # user login using flask-login built in function
 
             flash("Login successful.")
@@ -109,6 +101,7 @@ def login():
             return render_template('user_login_extends_base.html', form = form)
         
     return render_template('user_login_extends_base.html', form = form)
+
 
 @bp.route('/logout')
 @login_required
@@ -135,13 +128,13 @@ def admin_dashboard():
     return render_template('admin/admin_layout.html') 
 
 
-
 @bp.route('/user_dashboard')
 @login_required
 def user_dashboard():
     if current_user.is_admin:
         return redirect(url_for('users.admin_dashboard'))
     return render_template('user_layout.html') 
+
 
 @bp.route('/user_dashboard/transactions')
 @login_required
