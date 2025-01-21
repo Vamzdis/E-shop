@@ -31,7 +31,7 @@ def create_app():
         return User.query.get(int(user_id))
 
     app.register_blueprint(shop_routes.bp)
-    app.register_blueprint(user_routes.user_routes)
+    app.register_blueprint(user_routes.bp)
 
     return app
 
