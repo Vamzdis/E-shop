@@ -13,6 +13,16 @@
     <div class="header_container">
         <h1>FTWT shop</h1>
         <div class="header_buttons">
+            <a href="{{url_for('cart.view_cart')}}"> 
+                <button class="btn btn-primary btn-sm"> 
+                    My cart
+                </button> 
+            </a>
+            <a href="{{url_for('admin.index')}}"> 
+                <button class="btn btn-primary btn-sm"> 
+                    Admin
+                </button> 
+            </a>
             <a href="{{url_for('users.register')}}"> 
                 <button class="btn btn-primary btn-sm"> 
                     Register
@@ -23,8 +33,6 @@
                     Login
                 </button> 
             </a>
-            <!-- <a href = "{{url_for('users.register')}}" class="btn btn-primary btn-sm"> Register </a>
-            <button type="button" class="btn btn-primary btn-sm">My cart</button> -->
         </div>
     </div>
 </header>

@@ -1,0 +1,54 @@
+
+{%extends "/admin/admin_layout.html" %}
+{% block title %} Products {% endblock %}
+{% block content %}
+ 
+<a href="{{ url_for('admin.add_product') }}" class="btn btn-primary btn-lg btn-block"><i class="fa-solid fa-pen"></i>Create New Product</a>
+<h2 class="text-center my-3">Product List</h2>
+    <table id="productTable" class="display">
+        <thead>
+            <tr>
+                <th>Actions</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Image</th>
+                <th>Stock</th>
+                <th>Rating</th>
+                <th>Is Active</th>
+                <th>Created on</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>
+                    <a href="{{ url_for('admin.edit_product', id=product.id) }}" class="btn btn-primary"><i class="fa-solid fa-pen"></i>Edit</a>
+                    <form action="{{ url_for('admin.delete_product', id=product.id) }}" method="post" style="display:inline;" onsubmit="return confirmDelete()">
+                        <button class="btn btn-secondary" type="submit">
+                            <i class="fa-solid fa-trash-can"></i>Delete
+                        </button>
+                    </form>
+                    <script>
+                        function confirmDelete() {
+                            return confirm('Ar tikrai norite ištrinti šį produktą?');
+                        }
+                    </script>
+                </td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.description }}</td>
+                <td>{{ product.price }}</td>
+                <td>{{ product.picture }}</td>
+                <td>{{ product.quantity }}</td>
+                <td>{{ product.rating }}</td>
+                <td>{{ product.is_available }}</td>
+                <td>{{ product.created_on }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+ 
+ 
+ 
+ 
+{% endblock %}

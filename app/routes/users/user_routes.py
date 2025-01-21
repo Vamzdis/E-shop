@@ -30,9 +30,9 @@ def register():
     if form.validate_on_submit():
         name = form.name.data
         surname = form.surname.data
-        login_email = form.email.data
+        email = form.email.data
         password = form.password.data
-    
+
         if User.query.filter(User.login_email == login_email).first():
             flash("The email you've entered ir registered already.")
             return render_template('user_register_extends_base.html', form=form)
@@ -44,9 +44,8 @@ def register():
 
         flash(f"Welcome {name}! Your registration is successfu, you can now log in")
         return redirect(url_for('users.login'))
-
+      
     return render_template('user_register_extends_base.html', form=form)
- 
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
