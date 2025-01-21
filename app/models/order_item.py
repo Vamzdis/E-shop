@@ -1,6 +1,6 @@
 from app.database import db
 
-class Order_items(db.Model):
+class OrderItem(db.Model):
     __tablename__ = 'orders_items'
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     order_id = db.Column(db.Integer, db.ForeignKey("orders.id"))

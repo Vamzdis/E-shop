@@ -8,7 +8,7 @@ class CartItem(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'))
     quantity = db.Column(db.Integer, nullable = False)
 
-    product_carts = db.relationship('ProductCart', back_populates='cart_items')
+    products_carts = db.relationship('ProductCart', back_populates='cart_items')
     product = db.relationship('Product', back_populates='cart_items')
     
     def __init__(self, quantity : int):
