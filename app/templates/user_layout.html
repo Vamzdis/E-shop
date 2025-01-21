@@ -22,24 +22,18 @@
 <body>
     <header>
         <div class="container nav-bar">
-                <a class="nav-link" href="{{ url_for('admin.index') }}" >
+                <a class="nav-link" href="{{ url_for('users.home') }}" >
                     <i class="fa-solid fa-gauge-high"></i> Dashboard
                 </a>
-                <a class="nav-link" href="{{ url_for('admin.list_products') }}">
-                    <i class="fa-solid fa-cart-shopping"></i> Products  
-                </a>
                 <a class="nav-link" href="#">
-                    <i class="fa-solid fa-users"></i> Users  
+                    <i class="fa-solid fa-cart-shopping"></i> Products  
                 </a>
                 <a class="nav-link" href="#">
                     <i class="fa-solid fa-list"></i> Orders  
                 </a>
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="{{ url_for('users.user_transactions') }}">
                     <i class="fa-solid fa-money-bill-transfer"></i> Transactions  
                 </a>
-                <a class="nav-link" href="{{ url_for('shop.show') }}">
-                    <i class="fa-solid fa-globe"></i> View Website  
-                </a>  
                 <a class="nav-link" href="{{ url_for('users.logout')}}">
                     <i class="fa-solid fa-right-to-bracket"></i> Logout
                 </a>  
