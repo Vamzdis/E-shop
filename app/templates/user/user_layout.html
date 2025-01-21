@@ -22,44 +22,24 @@
 <body>
     <header>
         <div class="container nav-bar">
-                <a class="nav-link" href="{{ url_for('admin.index') }}" >
+                <a class="nav-link" href="{{ url_for('users.home') }}" >
                     <i class="fa-solid fa-gauge-high"></i> Dashboard
                 </a>
-                <a class="nav-link" href="{{ url_for('admin.list_products') }}">
-                    <i class="fa-solid fa-cart-shopping"></i> Products  
-                </a>
                 <a class="nav-link" href="#">
-                    <i class="fa-solid fa-users"></i> Users  
+                    <i class="fa-solid fa-cart-shopping"></i> Products  
                 </a>
                 <a class="nav-link" href="#">
                     <i class="fa-solid fa-list"></i> Orders  
                 </a>
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="{{ url_for('users.user_transactions') }}">
                     <i class="fa-solid fa-money-bill-transfer"></i> Transactions  
                 </a>
-                <a class="nav-link" href="{{ url_for('shop.show') }}">
-                    <i class="fa-solid fa-globe"></i> View Website  
-                </a>  
                 <a class="nav-link" href="{{ url_for('users.logout')}}">
                     <i class="fa-solid fa-right-to-bracket"></i> Logout
                 </a>  
         </div>
     </header>
     <main>
-        {% with messages = get_flashed_messages(with_categories=True) %}            <!--display flash messages-->
-            {% if messages %}
-                <div class="container mt-3">
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
         <div class="container">
             {% block content %}{% endblock %}
         </div>

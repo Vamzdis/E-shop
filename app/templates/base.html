@@ -11,7 +11,7 @@
 
 <header>
     <div class="header_container">
-        <h1>FTWT shop</h1>
+        <a href="{{url_for('shop.show')}}" style="text-decoration: none;"><h1>FTWT shop</h1></a>
         <div class="header_buttons">
             <!-- THIS URL IS A PLACEHOLDER! MUST BE UPDATED -->
             <a href="{{url_for('admin.index')}}"> 
@@ -22,6 +22,10 @@
             <a href="{{url_for('admin.index')}}"> 
                 <button class="btn btn-primary btn-sm"> 
                     Admin
+                </button>
+            <a href="{{url_for('users.home')}}"> 
+                <button class="btn btn-primary btn-sm"> 
+                    User
                 </button> 
             </a>
             <a href="{{url_for('users.register')}}"> 
