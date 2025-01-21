@@ -10,7 +10,8 @@ bp = Blueprint('shop', __name__)
 
 @bp.route('/')
 def show():
-
-    products = Product.query.all()
-
+    products = Product.query.filter_by(is_deleted=False).all()
     return render_template("products_extends_base.html", products=products)
+
+
+    
