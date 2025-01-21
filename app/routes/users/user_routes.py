@@ -34,7 +34,7 @@ def register():
         password = form.password.data
 
         if User.query.filter(User.login_email == login_email).first():
-            return render_template('create_user.html', error="The email you entered is already registered, please try another one.")
+            return render_template('user_register_extends_base.html', form=form, error="The email you entered is already registered, please try another one.")
         
         password_hash = generate_password_hash(password) 
         new_user = User(name, surname, login_email, password_hash)
