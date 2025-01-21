@@ -22,6 +22,10 @@ class LoginForm(FlaskForm):
 
 bp = Blueprint('users', __name__)
 
+@bp.route('/users')
+def home():
+    return render_template('user_index.html')
+
 @bp.route('/register', methods = ['GET','POST'])
 def register():
 
@@ -93,7 +97,7 @@ def dashboard():
 def admin_dashboard():
     if not current_user.is_admin:
         return redirect(url_for('users.dashboard'))
-    return render_template('admin_dashboard.html') #This can be changed to something more likeable
+    return render_template('admin/admin_layout.html') 
 
 
 
@@ -102,4 +106,11 @@ def admin_dashboard():
 def user_dashboard():
     if current_user.is_admin:
         return redirect(url_for('users.admin_dashboard'))
-    return render_template('user_dashboard.html') #This can be changed to something more likeable
+    return render_template('user_layout.html') 
+
+@bp.route('/user_dashboard/transactions')
+@login_required
+def user_transactions():
+    if current_user.is_admin:
+        return redirect(url_for('users.admin_dashboard'))
+    return render_template('user_transactions.html') 
