@@ -19,28 +19,25 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Example data (replace with real data from your backend) -->
+                {% for transaction in transactions %}
                 <tr>
-                    <td>1</td>
-                    <td>TXN123456</td>
-                    <td>2025-01-15</td>
-                    <td>$50.00</td>
-                    <td><span class="badge badge-success">Completed</span></td>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ transaction.id }}</td>
+                    <td>{{ transaction.created_on }}</td>
+                    <td>€{{ transaction.sum }}</td>
+                    <td>
+                        {% if transaction.status == 'completed' %}
+                            <span class="badge badge-success">Completed</span>
+                        {% elif transaction.status == 'failed' %}
+                            <span class="badge badge-danger">Failed</span>
+                        {% elif transaction.status == 'pending' %}
+                            <span class="badge badge-warning">Pending</span>
+                        {% else %}
+                            <span class="badge badge-secondary">Unknown</span>
+                        {% endif %}
+                    </td>
                 </tr>
-                <tr>
-                    <td>2</td>
-                    <td>TXN654321</td>
-                    <td>2025-01-18</td>
-                    <td>$120.00</td>
-                    <td><span class="badge badge-danger">Failed</span></td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>TXN789012</td>
-                    <td>2025-01-20</td>
-                    <td>$80.00</td>
-                    <td><span class="badge badge-warning">Pending</span></td>
-                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
@@ -49,10 +46,9 @@
 <script>
     $(document).ready(function() {
         $('#transactionsTable').DataTable({
-            "order": [[ 2, "desc" ]],  // Sort by date column (3rd column, 0-based index)
-            "paging": true,           // Enable pagination
-            "searching": true,        // Enable search
-            "info": true,             // Show table info
+            "order": [[ 2, "desc" ]],  
+            "paging": true,           
+            "info": true,             
         });
     });
 </script>
