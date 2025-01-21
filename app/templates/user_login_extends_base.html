@@ -4,7 +4,9 @@
 
 {% block content %}
 
-<h1>Login</h1>
+<div class="page-title-container">
+    <h3 class="page-title">Login</h3>
+</div>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
@@ -14,6 +16,7 @@
 {% endif %}
 {% endwith %}
 
+<div class="form-container">
     <form action="{{ url_for('users.login') }}" method="POST" enctype="multipart/form-data">
         {{ form.csrf_token }}
 
@@ -41,14 +44,18 @@
             {% endif %}
         </div>
 
-        <div class="d-grid">
-            {{ form.submit(class="btn btn-primary btn-block") }}
+        <div class="d-grid form-button">
+            {{ form.submit(class="btn btn-primary btn-block smaller-width-btn") }}
         </div>
     </form>
-    <a href="{{ url_for('users.register') }}">
-        <button class="btn btn-success btn-block">
+</div>  
+
+<div class="form-button" id="register-btn-container">
+    <a href="{{ url_for('users.register') }}" class="link-btn">
+        <button class="btn btn-success btn-block smaller-width-btn" >
             Don't have an account? Register here
         </button>
     </a>
+</div>
 
 {% endblock %}
