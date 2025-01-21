@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+
+<h1>Registration</h1>
+    <form action="{{ url_for('events.add_event') }}" method="POST" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+
+        <p>{{ form.username.label }} {{ form.username() }}</p> 
+        <p>{{ form.password.label }} {{ form.password() }}</p> 
+        
+        <p><input type="submit" value="submit" /></p>
+
+    </form>
+
+{% endblock %}

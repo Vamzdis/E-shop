@@ -3,12 +3,25 @@ from app.database import db
 from app.models.user import User
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_wtf import FlaskForm 
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired, Length, Email, EqualTo
 
-user_routes = Blueprint('users', __name__)
+class RegistrationForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=3, max=20)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Register')
 
-@user_routes.route('/register', methods = ['GET','POST'])
+bp = Blueprint('users', __name__)
+
+@bp.route('/register', methods = ['GET','POST'])
 def register():
-    if request.method == 'POST':
+
+    form=RegistrationForm()
+
+    if request.method == 'GET':
         login_email = request.form.get('user_email')
         password = request.form.get('password')
         name = request.form.get('name')
@@ -29,9 +42,9 @@ def register():
         return redirect(url_for('users.login'))
     
 
-    return render_template('create_user.html')
+    return render_template('create_user.html', form = form)
 
-@user_routes.route('/login', methods=['GET', 'POST'])
+@bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         login_email = request.form.get('email')
@@ -50,14 +63,14 @@ def login():
 
     return render_template('login.html')
 
-@user_routes.route('/logout')
+@bp.route('/logout')
 @login_required
 def logout():
     logout_user()
     flash("You have successfully logged out!")
     return redirect(url_for('users.login'))
 
-@user_routes.route('/dashboard')
+@bp.route('/dashboard')
 @login_required
 def dashboard():
     if current_user.is_admin:
@@ -65,7 +78,7 @@ def dashboard():
     else:
         return redirect(url_for('users.user_dashboard'))
     
-@user_routes.route('/admin_dashboard')
+@bp.route('/admin_dashboard')
 @login_required
 def admin_dashboard():
     if not current_user.is_admin:
@@ -73,7 +86,7 @@ def admin_dashboard():
     return render_template('admin_dashboard.html') #This can be changed to something more likeable
 
 
-@user_routes.route('/user_dashboard')
+@bp.route('/user_dashboard')
 @login_required
 def user_dashboard():
     if current_user.is_admin:
