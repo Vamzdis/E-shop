@@ -86,7 +86,7 @@ def list_products():
     return render_template("admin/product_list.html", products=products)    #add template
 
 
-@admin.route("/delete_producct/<int:id>", methods = ["GET", "POST"])
+@admin.route("/delete_product/<int:id>", methods = ["GET", "POST"])
 def delete_product(id):
     product = Product.query.get(id)
 
