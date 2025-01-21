@@ -8,8 +8,8 @@ class ProductCart(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
     created_on = db.Column(db.DateTime, default = func.now())
 
-    user = db.relationship('User', back_populates='product_carts')
-    cart_items = db.relationship('CartItem', back_populates='product_carts')
+    user = db.relationship('User', back_populates='products_carts')
+    cart_items = db.relationship('CartItem', back_populates='products_carts')
 
     def __init__(self, created_on=None):
         self.created_on = created_on

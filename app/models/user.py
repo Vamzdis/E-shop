@@ -1,8 +1,9 @@
 from app.database import db
 from datetime import datetime
 from sqlalchemy import func
+from flask_login import UserMixin
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
@@ -24,14 +25,12 @@ class User(db.Model):
     ratings = db.relationship("Rating", back_populates="user", cascade = "all,delete")
 
 #I cant thing of a scenario where we would need to specify balance when creating it so I'm not adding it to init method
-    def __init__(self, name : str, last_name: str, login_email : str, password : str, block_until : datetime = None, created_on : datetime = None):
+    def __init__(self, name : str, last_name : str, login_email : str, password : str, created_on : datetime = None):
         self.name = name
         self.last_name = last_name
         self.login_email= login_email
-        self.password = password 
-        self.block_until = block_until
-        self.created_on = created_on
-
-
+        self.password = password #when does password hashing happen? probably outside the class
+        
     def __repr__(self):
         return f"{self.name} id ({self.id})"
+    
