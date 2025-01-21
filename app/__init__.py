@@ -12,6 +12,7 @@ from app.models.transaction import Transaction
 
 from app.routes import shop_routes
 from app.routes.users import user_routes
+from app.routes import admin_routes
 
 login_manager = LoginManager() 
 
@@ -32,6 +33,7 @@ def create_app():
 
     app.register_blueprint(shop_routes.bp)
     app.register_blueprint(user_routes.bp)
+    app.register_blueprint(admin_routes.admin)
 
     return app
 
