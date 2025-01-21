@@ -28,37 +28,29 @@ def register():
     form=RegistrationForm()
     
     if form.validate_on_submit():
-      name = form.name.data
-      surname = form.surname.data
-      login_email = form.email.data
-      password = form.password.data
+        name = form.name.data
+        surname = form.surname.data
+        login_email = form.email.data
+        password = form.password.data
 
-     if not login_email or not password or not name or not last_name:
-      return render_template('create_user.html', error="All required fields must be filled in!")
+    if not login_email or not password or not name or not surname:
+        return render_template('create_user.html', error="All required fields must be filled in!")
     
-     if User.query.filter(User.login_email == login_email).first():
-      return render_template('create_user.html', error="The email you entered is already registered, please try another one.")
+    if User.query.filter(User.login_email == login_email).first():
+        return render_template('create_user.html', error="The email you entered is already registered, please try another one.")
     
-      password_hash = generate_password_hash(password)
-      new_user = User(name=name, last_name = last_name, login_email= login_email, password=password_hash)
-   
-   
+    password_hash = generate_password_hash(password) 
+    new_user = User(name, surname, login_email, password_hash)
+    db.session.add(new_user)
+    db.session.commit()
 
-       new_user = User(name, surname, login_email, password_hash)
-
-       db.session.add(new_user)
-       db.session.commit()
-
-       flash("Registration successful! Please log in.")
-       return redirect(url_for('users.login'))
+    flash("Registration successful! Please log in.")
+    return redirect(url_for('users.login'))
     
-
-    return render_template('user_register_extends_base.html', form = form)
+    # return render_template('user_register_extends_base.html', form = form)
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
-
-
 
     form = LoginForm()
 
@@ -84,7 +76,7 @@ def login():
 
 
 @bp.route('/logout')
-    return render_template('user_login_extends_base.html', form = form)
+    # return render_template('user_login_extends_base.html', form = form)
 
 # @user_routes.route('/logout')
 # @login_required
