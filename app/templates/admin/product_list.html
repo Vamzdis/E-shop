@@ -1,5 +1,5 @@
-
 {%extends "/admin/admin_layout.html" %}
+
 {% block title %} Products {% endblock %}
 {% block content %}
  
@@ -15,7 +15,7 @@
                 <th>Image</th>
                 <th>Stock</th>
                 <th>Rating</th>
-                <th>Is available</th>
+                <th>Availability</th>
                 <th>Created on</th>
             </tr>
         </thead>
@@ -36,19 +36,58 @@
                     </script>
                 </td>
                 <td>{{ product.name }}</td>
-                <td>{{ product.description }}</td>
+                <td> <div class="description-container">
+                    <span class="description-short">{{ product.description[:30]}}...</span>
+                    <span class="description-full" style="display: none;">{{ product.description }}</span>
+                    <span class="read-more-btn text-primary" onclick="toggleDescription(this)" style="cursor: pointer;">Read More</span>
+                </div></td>
                 <td>{{ product.price }}</td>
                 <td><img src="{{ url_for('static', filename='uploads/' + product.picture) }}" alt="{{ product.name }}" width="100"></td>
                 <td>{{ product.quantity }}</td>
                 <td>{{ product.rating }}</td>
-                <td>{{ product.is_available }}</td>
+                <td>{% if product.is_available %}
+                    <span class="badge badge-success">Available</span>
+                    {% else %}
+                    <span class="badge badge-secondary">Unavailable</span>
+                    {% endif %}</td>
                 <td>{{ product.created_on }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
- 
- 
- 
- 
+</div>
+<script>
+    $(document).ready(function () {
+        // Prevent reinitialization
+        let table = $('#productTable').DataTable({
+            "destroy": true, 
+            "order": [[8, "desc"]], // Sort by the "Created On" column
+            "paging": true,
+            "searching": true,
+            "info": true,
+            "columnDefs": [
+                { "orderable": false, "targets": 0 } ] // Išjungti rikiavimą pirmame stulpelyje (Actions)
+        });
+    });
+
+    // Toggle Description Functionality
+    function toggleDescription(element) {
+        const shortDesc = element.previousElementSibling.previousElementSibling;
+        const fullDesc = element.previousElementSibling;
+
+        if (shortDesc.style.display === "none") {
+            shortDesc.style.display = "inline";
+            fullDesc.style.display = "none";
+            element.textContent = "Read More";
+        } else {
+            shortDesc.style.display = "none";
+            fullDesc.style.display = "inline";
+            element.textContent = "Read Less";
+        }
+    }
+    function confirmDelete() {
+        return confirm('Ar tikrai norite ištrinti šį produktą?');
+    }
+</script>
+
 {% endblock %}
