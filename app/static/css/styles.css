@@ -1,9 +1,13 @@
+/* html{
+    min-height: 100vh;
+} */
+
 body {
-    background-color: rgb(165, 161, 161);
+    font-family: 'Poppins', sans-serif;
 
 }
 header {
-    background-color: #0571ca;
+    background-color: #243644;
     color: white;
     text-align: left;
     position: fixed;
@@ -24,16 +28,20 @@ header {
 }
 
 footer {
-    background-color: #0571ca;
+    background-color: #243644;
     color: white;
-    padding: 10px;
+    /* padding: 10px; */
     text-align: left;
-    position: relative;
+    position: bottom;
     bottom: 0;
     width: 100%;
     padding: 5px 10px;
     box-sizing: border-box;
-    margin: 0 auto
+    margin: 0 auto;
+
+    position: fixed;
+    left: 0;
+    bottom: 0;
     
 }
 
@@ -43,8 +51,38 @@ footer {
     margin: 0.5% auto ;
     padding: 5px;
     box-sizing: border-box;
-    min-height: 100vh;
     margin-top: 70px;
+}
+
+#title-main{
+    font-weight: bold;
+    color: aliceblue;   
+    text-decoration: none;
+}
+
+#title-main :hover{
+    text-decoration: none;
+    text-shadow: aliceblue 1px 0 10px;
+}
+
+.page-title-container{
+display: block;
+margin-left: auto;
+margin-right: auto;
+}
+
+.page-title{
+    color: dimgray;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.form-container{
+    max-width: 600px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .header_buttons {
@@ -52,14 +90,22 @@ footer {
     gap: 20px;
 }
 
-.btn {
-    color: #0571ca;
-    background-color: white;
-    border-radius: 15px;
-    cursor: pointer;
+.smaller-width-btn{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 300px;
+
 }
 
-.btn:hover {
-    background-color: #0571ca;
-    color: white;;
+.form-button{
+    padding: 10px;
+}
+
+.link-btn {
+    text-decoration: none;
+}
+
+.link-btn:hover {
+    text-decoration: none;
 }
