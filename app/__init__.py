@@ -1,6 +1,8 @@
 from flask import Flask as fl
 from config import Config as cfg
 
+from flask_login import LoginManager, login_required, current_user
+
 from app.models.cart_item import CartItem
 from app.models.order_item import Order_items
 from app.models.order import Order
@@ -11,7 +13,7 @@ from app.models.transaction import Transaction
 
 from app.routes import shop_routes
 from app.routes.users import user_routes
-
+from app.routes import cart
 
 def create_app():
     app = fl(__name__, static_folder='static')
@@ -23,6 +25,7 @@ def create_app():
 
     app.register_blueprint(shop_routes.bp)
     app.register_blueprint(user_routes.bp)
+    app.register_blueprint(cart.bp)
 
     return app
 
