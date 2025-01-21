@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, session, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash
 from sqlalchemy import or_, and_
 from app.database import db
 from app.models.user import User
@@ -53,7 +53,7 @@ bp = Blueprint('users', __name__)
 
 @bp.route('/users')
 def home():
-    return render_template('user_index.html')
+    return render_template('user/user_index.html')
 
 @bp.route('/register', methods = ['GET','POST'])
 def register():
@@ -65,10 +65,6 @@ def register():
         surname = form.surname.data
         login_email = form.email.data
         password = form.password.data
-
-        if User.query.filter(User.login_email == login_email).first():
-            flash("The email you've entered is registered already")
-            return render_template('user/user_register_extends_base.html', form=form)
         
         password_hash = generate_password_hash(password) 
         new_user = User(name, surname, login_email, password_hash)
@@ -94,7 +90,7 @@ def login():
         if user and check_password_hash(user.password, password):
             if user.is_deleted or not user.is_active:
                 form.email.errors.append("This account is blocked or deleted.")
-                return render_template('login.html', form=form)
+                return render_template('user/user_login_extends_base.html', form=form)
             
             login_user(user)  # user login using flask-login built in function
 
