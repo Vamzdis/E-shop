@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, abort
 from sqlalchemy import or_, and_
 from app.database import db
 from app.models.user import User
@@ -142,3 +142,14 @@ def user_transactions():
     if current_user.is_admin:
         return redirect(url_for('users.admin_dashboard'))
     return render_template('user/user_transactions.html') 
+
+@bp.route('/admin/all_users')
+@login_required
+def show_users():
+    # This route is only meant to be accessed by admins
+    if not current_user.is_admin:
+        abort(403)  # Forbidden for non-admins
+
+    
+    users = User.query.all()
+    return render_template('admin/view_users.html', users=users)
