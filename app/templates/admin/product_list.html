@@ -8,7 +8,6 @@
     <table id="productTable" class="display">
         <thead>
             <tr>
-                <th>Actions</th>
                 <th>Title</th>
                 <th>Description</th>
                 <th>Price</th>
@@ -17,24 +16,12 @@
                 <th>Rating</th>
                 <th>Availability</th>
                 <th>Created on</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for product in products %}
             <tr>
-                <td>
-                    <a href="{{ url_for('admin.edit_product', id=product.id) }}" class="btn btn-primary"><i class="fa-solid fa-pen"></i>Edit</a>
-                    <form action="{{ url_for('admin.delete_product', id=product.id) }}" method="post" style="display:inline;" onsubmit="return confirmDelete()">
-                        <button class="btn btn-secondary" type="submit">
-                            <i class="fa-solid fa-trash-can"></i>Delete
-                        </button>
-                    </form>
-                    <script>
-                        function confirmDelete() {
-                            return confirm('Ar tikrai norite ištrinti šį produktą?');
-                        }
-                    </script>
-                </td>
                 <td>{{ product.name }}</td>
                 <td> <div class="description-container">
                     <span class="description-short">{{ product.description[:30]}}...</span>
@@ -51,6 +38,18 @@
                     <span class="badge badge-secondary">Unavailable</span>
                     {% endif %}</td>
                 <td>{{ product.created_on }}</td>
+                <td>
+                    <a href="{{ url_for('admin.edit_product', id=product.id) }}" class="btn btn-sm btn-warning" style="margin-right: 5px;">Edit</a>
+                    <form action="{{ url_for('admin.delete_product', id=product.id) }}" method="post" onsubmit="return confirmDelete()" style="margin: 0;">
+                        <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                    </form>
+                </td>
+                    <script>
+                        function confirmDelete() {
+                            return confirm('Ar tikrai norite ištrinti šį produktą?');
+                        }
+                    </script>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
@@ -85,9 +84,7 @@
             element.textContent = "Read Less";
         }
     }
-    function confirmDelete() {
-        return confirm('Ar tikrai norite ištrinti šį produktą?');
-    }
+
 </script>
 
 {% endblock %}
