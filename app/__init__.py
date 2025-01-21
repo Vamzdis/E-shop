@@ -11,7 +11,7 @@ from app.models.user import User
 from app.models.transaction import Transaction
 
 from app.routes import shop_routes
-from app.routes.users import user_routes
+from app.routes import user_routes
 from app.routes import admin_routes
 
 login_manager = LoginManager() 

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, session, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, abort
 from sqlalchemy import or_, and_
 from app.database import db
 from app.models.user import User
@@ -53,7 +53,7 @@ bp = Blueprint('users', __name__)
 
 @bp.route('/users')
 def home():
-    return render_template('user_index.html')
+    return render_template('user/user_index.html')
 
 @bp.route('/register', methods = ['GET','POST'])
 def register():
@@ -74,7 +74,7 @@ def register():
         flash(f"Welcome {name}! Your registration is successful, you can now log in")
         return redirect(url_for('users.login'))
       
-    return render_template('user_register_extends_base.html', form=form)
+    return render_template('user/user_register_extends_base.html', form=form)
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -90,7 +90,7 @@ def login():
         if user and check_password_hash(user.password, password):
             if user.is_deleted or not user.is_active:
                 form.email.errors.append("This account is blocked or deleted.")
-                return render_template('login.html', form=form)
+                return render_template('user/user_login_extends_base.html', form=form)
             
             login_user(user)  # user login using flask-login built in function
 
@@ -98,9 +98,9 @@ def login():
             return redirect(url_for('users.dashboard'))
         else:
             flash("Invalid email or password")
-            return render_template('user_login_extends_base.html', form = form)
+            return render_template('user/user_login_extends_base.html', form = form)
         
-    return render_template('user_login_extends_base.html', form = form)
+    return render_template('user/user_login_extends_base.html', form = form)
 
 
 @bp.route('/logout')
@@ -133,7 +133,7 @@ def admin_dashboard():
 def user_dashboard():
     if current_user.is_admin:
         return redirect(url_for('users.admin_dashboard'))
-    return render_template('user_layout.html') 
+    return render_template('user/user_layout.html') 
 
 
 @bp.route('/user_dashboard/transactions')
@@ -141,4 +141,15 @@ def user_dashboard():
 def user_transactions():
     if current_user.is_admin:
         return redirect(url_for('users.admin_dashboard'))
-    return render_template('user_transactions.html') 
+    return render_template('user/user_transactions.html') 
+
+@bp.route('/admin/all_users')
+@login_required
+def show_users():
+    # This route is only meant to be accessed by admins
+    if not current_user.is_admin:
+        abort(403)  # Forbidden for non-admins
+
+    
+    users = User.query.all()
+    return render_template('admin/view_users.html', users=users)
