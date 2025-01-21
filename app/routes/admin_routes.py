@@ -82,7 +82,7 @@ def add_product():
 
 @admin.route("/list_products")
 def list_products():
-    products = Product.query.filter_by(is_deleted = False).all()
+    products = Product.query.all()
     return render_template("admin/product_list.html", products=products)    #add template
 
 
@@ -102,41 +102,58 @@ def delete_product(id):
         return render_template("admin/product_list.html", product=product)      #add template
 
 
+@admin.route("/restore_product/<int:id>", methods = ["GET", "POST"])
+def restore_product(id):
+    product = Product.query.get(id)
+
+    if not product:
+        flash('Product not found','danger')
+        return redirect(request.url)
+
+    if request.method == "POST":
+        product.is_deleted = False
+        db.session.commit()
+        flash("Product restored successfully", 'success')
+        return redirect(url_for("admin.list_products"))         #add template
+    else:
+        return render_template("admin/product_list.html", product=product)      #add template
+
+
+
 @admin.route("/edit_product/<int:id>", methods = ["GET", "POST"])
 def edit_product(id):
     product = Product.query.get(id)
 
     if not product:
-        return "Product not found", 404
-
+        flash("Product not found",'danger')
+        return redirect(url_for("admin.list_products"))
+    
     if request.method == "POST":
         try:
-            name = request.form.get("name")
-            description = request.form.get("description")
-            price = request.form.get("price")
-            quantity = request.form.get("quantity")
+            product.name = request.form["name"]
+            product.description = request.form["description"]
+            product.price = request.form["price"]
+            product.quantity = request.form["quantity"]
 
-            if name:
-                product.name = name
-            if description:
-                product.description = description
-            if price:
-                product.price = float(price)
-            if quantity:
-                product.quantity = int(quantity)
+            if 'picture' in request.files and request.files["picture"].filename != '':
+                picture = request.files["picture"]
+                if allowed_file(picture.filename):
+                    filename = secure_filename(picture.filename)                                #returns the secure version of the image
+                    filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename) 
+                    picture.save(filepath)
+                    product.picture=filename
+                else:
+                    flash("upload error",'danger')
+                    return redirect(request.url)
+            db.session.commit()
+            flash("Entry edited successsfully", "success")      
+        except:
+            flash("smoething went wrong, check input", 'danger')
+            return redirect(request.url) 
+        return redirect(url_for("admin.list_products"))    #add url
+    else:
+        return render_template("admin/edit_product.html", product = product)
 
-            if "BUTTON_NAME_HERE" in request.form:      # insert restore button name here
-                product.is_deleted = False
-            else:
-                product.is_deleted = product.is_deleted
-            
-            product.is_available = product.quantity > 0
-
-        except ValueError as e: 
-            error_message = str(e)
-            return render_template("...", error_message = error_message)    #add url
-        return redirect(url_for("..."))
-    return render_template("...", product = product)            #add url
 
 
 @admin.route("/list_users")
