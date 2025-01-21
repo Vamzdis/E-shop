@@ -65,17 +65,5 @@
         </div>
     </main>
 </body>
-<script>
-    $(document).ready(function() {
-        $('#productTable').DataTable({
-            "order": [[ 3, "asc" ]],  // Rikiuoti pagal kainą (4-oji kolona, pradedant nuo 0)
-            "paging": true,           // Įjungti puslapiavimą
-            "searching": true,        // Įjungti paiešką
-            "columnDefs": [
-                { "orderable": false, "targets": 0 } // Išjungti rikiavimą pirmame stulpelyje (Actions)
-            ]
-        });
-    });
-</script>
  
 </html>
