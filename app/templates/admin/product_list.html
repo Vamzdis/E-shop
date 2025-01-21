@@ -38,7 +38,7 @@
                 <td>{{ product.name }}</td>
                 <td>{{ product.description }}</td>
                 <td>{{ product.price }}</td>
-                <td>{{ product.picture }}</td>
+                <td><img src="{{ url_for('static', filename='uploads/' + product.picture) }}" alt="{{ product.name }}" width="100"></td>
                 <td>{{ product.quantity }}</td>
                 <td>{{ product.rating }}</td>
                 <td>{{ product.is_available }}</td>

@@ -1,15 +1,25 @@
 
-from flask import render_template, request, redirect, url_for, Blueprint
+from flask import render_template, request, redirect, url_for, Blueprint, current_app, flash
 from app.models.product import Product
 from app.database import db
 from sqlalchemy import func
 from app.models.user import User
+from werkzeug.utils import secure_filename
+from config import Config
+import os
+
 
 admin = Blueprint("admin", __name__, url_prefix = "/admin")
+
+
+def allowed_file(filename):     
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']   # checks if uploeaded file is in allowed extentions 
+
 
 @admin.route('/')
 def index():
     return render_template('admin/index.html')
+
 
 @admin.route("/add_product", methods = ["GET", "POST"])
 def add_product():
@@ -19,29 +29,55 @@ def add_product():
             description = request.form["description"]
             price = float(request.form["price"])
             quantity = int(request.form["quantity"])
-        except ValueError as e: 
-            error_message = str(e)
-            return render_template("...", error_message = error_message)        #add template
+        except: 
+            flash("something went wrong, check input", 'danger')
+            return render_template("admin/product_list.html")        #add template
         
         is_available = quantity > 0
         is_deleted = False
         created_on = func.now()
-        picture = "???"                             #add picture????
+        
+        if 'picture' not in request.files:
+            flash('there is no file selected','danger')         # reloads the current page if no image is selected
+            return redirect(request.url)
+        
+        picture = request.files["picture"]
+ 
+        if picture.filename == '':
+            flash('filename is empty','danger')                  # reloads currnet page if file is not accepted
+            return redirect(request.url)
+
+        if picture and allowed_file(picture.filename):
+            filename = secure_filename(picture.filename)                                #returns the secure version of the image
+            filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)      #filepath to upload folder
+            try:
+                picture.save(filepath)                  
+            except:
+                flash("upload error",'danger')
+                return redirect(request.url)
+            
+        else:
+            flash("format not allowed",'danger')
+            return redirect(request.url)
+
 
         product = Product(
-            name=name, description=description, 
+            name=name,
+            description=description, 
             price=price, 
             quantity=quantity, 
             is_available=is_available, 
             is_deleted=is_deleted,
-            created_on = created_on
+            created_on = created_on,
+            picture = filename
             )
         
         db.session.add(product)
         db.session.commit()
-        return redirect(url_for("..."))         #add template
+        flash("product added successfully",'success')
+        return redirect(url_for("admin.list_products"))         #add template
     else:
-        return render_template("...")           #add template
+        return render_template("admin/add_product.html")           #add template
 
 
 @admin.route("/list_products")
