@@ -19,18 +19,18 @@ class Product(db.Model):
     order_items = db.relationship("OrderItem", back_populates="product")
     ratings = db.relationship("Rating",back_populates="product")
 
-
-    def __init__(self, name, description, price, picture, quantity, is_available, rating, is_deleted, created_on=None):
+    def __init__(self, name:str, description:str, price:float, picture :str, quantity:int, rating:float, 
+                 is_available = None, is_deleted = None, created_on =None):
+        
         self.name = name
         self.description = description
         self.price = price
         self.picture = picture
         self.quantity = quantity
         self.rating = rating
-        self.created_on = created_on
         self.is_available = is_available
         self.is_deleted = is_deleted
-        self.rating = rating
+        self.created_on = created_on
 
     def __repr__(self):
         return f" Product: {self.name}, price - {self.price}, description - {self.description}"
