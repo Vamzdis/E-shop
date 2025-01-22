@@ -30,7 +30,7 @@ class Product(db.Model):
         self.rating = rating
         self.is_available = is_available
         self.is_deleted = is_deleted
-        self.rating = rating
+        self.created_on = created_on
 
     def __repr__(self):
         return f" Product: {self.name}, price - {self.price}, description - {self.description}"
