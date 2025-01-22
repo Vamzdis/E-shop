@@ -109,3 +109,17 @@ margin-right: auto;
 .link-btn:hover {
     text-decoration: none;
 }
+
+.product-img {
+    width: auto;
+    height: 220px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+}
+.product-img img {
+    height: 200px;
+    object-fit: cover;
+}
