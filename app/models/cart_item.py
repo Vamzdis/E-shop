@@ -10,9 +10,6 @@ class CartItem(db.Model):
 
     products_carts = db.relationship('ProductCart', back_populates='cart_items')
     product = db.relationship('Product', back_populates='cart_items')
-    
-    def __init__(self, quantity : int):
-        self.quantity = quantity
 
     def __repr__(self):
         pass

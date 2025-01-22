@@ -58,7 +58,7 @@ class RegistrationForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
+    password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
 
 bp = Blueprint('users', __name__)
@@ -215,7 +215,7 @@ def add_balance():
             # Update user's balance
             current_user.balance += amount
 
-            transaction = Transaction(user_id=current_user.id, sum=amount, status="Completed")
+            transaction = Transaction(user_id=current_user.id, sum=amount, status="Completed", type = "Deposit")
             db.session.add(transaction)
             db.session.commit()
 
@@ -260,7 +260,7 @@ def cash_out():
         # Deduct amount from user's balance
         current_user.balance -= amount
 
-        transaction = Transaction(user_id=current_user.id, sum=-amount, status="Completed")
+        transaction = Transaction(user_id=current_user.id, sum=-amount, status="Completed", type = "Cash out")
         db.session.add(transaction)
         db.session.commit()
 
@@ -272,3 +272,35 @@ def cash_out():
         flash("An error occurred. Please try again later.", "danger")
 
     return redirect(url_for('users.user_dashboard'))
+
+@bp.route('/order_payment', methods=['POST'])
+@login_required
+def pay_for_order():
+    try:
+        order_id = request.form.get('order_id')
+        order = Order.query.get(order_id)
+
+        if not order:
+            flash("Order not found.", "danger")
+            return redirect(url_for('users.user_dashboard'))
+
+        # Check if the user has sufficient funds
+        price = order.purchase_price
+        if current_user.balance < price:
+            flash("Insufficient funds. Please add to your balance.", "danger")
+            return redirect(url_for('users.user_dashboard'))
+
+        # Deduct the price from the user's balance
+        current_user.balance -= price
+
+        transaction = Transaction(user_id=current_user.id, sum=-price, status="Completed", type = "Order payment")
+        db.session.add(transaction)
+        db.session.commit()
+    
+        flash(f"Successfully paid {price}€ for your order!", "success")
+    except Exception as e:
+        print(f"Error during payment: {e}")
+        flash("An error occurred. Please try again later.", "danger")
+
+    return redirect(url_for('users.user_dashboard'))
+

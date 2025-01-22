@@ -20,6 +20,14 @@
 
                     <!-- UPDATE THIS! When we will have proper rating-->
                         <p class="card-text text-muted">Rating: {{ product.rating }}</p>
+
+                        <div id="add-to-cart-btn-container">
+
+                            <button class="btn btn-success" onclick="addToCart('{{ product.id }}')">
+                                Add to cart
+                            </button>
+
+                        </div>
                     </div>
                     <div class="card-footer">
 
@@ -31,4 +39,5 @@
 
       </div>
 </div>
+<script src="{{ url_for('static', filename='js/cart.js') }}"></script>
 {% endblock %}
