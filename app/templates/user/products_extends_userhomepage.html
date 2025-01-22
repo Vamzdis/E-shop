@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "user/user_homepage.html" %}
 
 {% block title %}Products{% endblock %}
 {% block content %}
@@ -42,7 +42,6 @@
       </div>
 </div>
 <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
-
 <script>
     const products = document.querySelectorAll('.product-card');
     const productsPerPage = 9;

@@ -3,6 +3,7 @@ from sqlalchemy import or_, and_
 from app.database import db
 from app.models.user import User
 from app.models.order import Order
+from app.models.product import Product
 from app.models.transaction import Transaction
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -69,10 +70,6 @@ def get_client_token():
     client_token = gateway.client_token.generate()
     return jsonify({"client_token": client_token})
 
-@bp.route('/users')
-def home():
-    return render_template('user/user_index.html')
-
 @bp.route('/register', methods = ['GET','POST'])
 def register():
 
@@ -85,11 +82,11 @@ def register():
         password = form.password.data
         
         password_hash = generate_password_hash(password) 
-        new_user = User(name, surname, login_email, password_hash)
+        new_user = User(name=name, last_name=surname, login_email=login_email, password=password_hash)
         db.session.add(new_user)
         db.session.commit()
 
-        flash(f"Welcome {name}! Your registration is successful, you can now log in")
+        flash(f"Welcome {name}! Your registration is successful, you can now log in", "success")
         return redirect(url_for('users.login'))
       
     return render_template('user/user_register_extends_base.html', form=form)
@@ -111,7 +108,7 @@ def login():
                 return render_template('user/user_login_extends_base.html', form=form)
             
             login_user(user)  # user login using flask-login built in function
-
+            flash("You have successfully logged in!", "success")
             return redirect(url_for('users.dashboard'))
         else:
             flash("Invalid email or password")
@@ -124,8 +121,16 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash("You have successfully logged out!")
+    flash("You have successfully logged out!", "success")
     return redirect(url_for('users.login'))
+
+@bp.route("/user_homepage")
+@login_required
+def user_homepage():
+    products = Product.query.filter_by(is_deleted=False).all()
+    if current_user.is_admin:
+        return redirect(url_for('users.admin_dashboard'))
+    return render_template("user/products_extends_userhomepage.html", products=products)
 
 
 @bp.route('/dashboard')
@@ -134,7 +139,7 @@ def dashboard():
     if current_user.is_admin:
         return redirect(url_for('users.admin_dashboard'))
     else:
-        return redirect(url_for('users.user_dashboard'))
+        return redirect(url_for('users.user_homepage'))
     
 
 @bp.route('/admin_dashboard')
@@ -276,4 +281,31 @@ def cash_out():
 @bp.route('/order_payment', methods=['POST'])
 @login_required
 def pay_for_order():
-    pass
+    try:
+        order_id = request.form.get('order_id')
+        order = Order.query.get(order_id)
+
+        if not order:
+            flash("Order not found.", "danger")
+            return redirect(url_for('users.user_dashboard'))
+
+        # Check if the user has sufficient funds
+        price = order.purchase_price
+        if current_user.balance < price:
+            flash("Insufficient funds. Please add to your balance.", "danger")
+            return redirect(url_for('users.user_dashboard'))
+
+        # Deduct the price from the user's balance
+        current_user.balance -= price
+
+        transaction = Transaction(user_id=current_user.id, sum=-price, status="Completed", type = "Order payment")
+        db.session.add(transaction)
+        db.session.commit()
+    
+        flash(f"Successfully paid {price}€ for your order!", "success")
+    except Exception as e:
+        print(f"Error during payment: {e}")
+        flash("An error occurred. Please try again later.", "danger")
+
+    return redirect(url_for('users.user_dashboard'))
+

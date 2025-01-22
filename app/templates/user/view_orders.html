@@ -6,8 +6,9 @@
 <h2>My Orders</h2>
 
 {% if orders %}
-<table class="table table-bordered">
-    <thead>
+<div class="table-responsive">
+    <table id="transactionsTable" class="table table-striped table-bordered">
+        <thead class="thead-dark">
         <tr>
             <th>Order ID</th>
             <th>Purchase Price</th>
@@ -32,6 +33,17 @@
         {% endfor %}
     </tbody>
 </table>
+</div>
+<script>
+    $(document).ready(function() {
+        $('#ordersTable').DataTable({
+            "order": [[0, "desc" ]],  // Sort by index (1st column, 0-based index)
+            "paging": true,           // Enable pagination
+            "searching": true,        // Enable search
+            "info": true,             // Show table info
+        });
+    });
+</script>
 {% else %}
     <p>No orders found.</p>
 {% endif %}
