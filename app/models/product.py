@@ -20,12 +20,13 @@ class Product(db.Model):
     ratings = db.relationship("Rating",back_populates="product")
 
 
-    def __init__(self, name, description, price, picture, quantity, is_available, is_deleted, created_on=None):
+    def __init__(self, name, description, price, picture, quantity, rating, is_available, is_deleted, created_on=None):
         self.name = name
         self.description = description
         self.price = price
         self.picture = picture
         self.quantity = quantity
+        self.rating = rating
         self.created_on = created_on
         self.is_available = is_available
         self.is_deleted = is_deleted
