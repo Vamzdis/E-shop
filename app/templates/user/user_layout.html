@@ -38,9 +38,10 @@
                 <span class="navbar-text ml-auto">  
                     <button type="button" class="btn btn-primary rounded-circle" 
             style="width: 18px; height: 18px; padding: 0; font-size: 11px;" 
-            data-toggle="modal" data-target="#addFundsModal">
-        +
-    </button>
+            data-toggle="modal" data-target="#addFundsModal">+</button>
+    <button type="button" class="btn btn-danger rounded-circle" 
+    style="width: 18px; height: 18px; padding: 0; font-size: 11px;" 
+    data-toggle="modal" data-target="#cashOutModal">-</button>
     <strong> Balance: {{ current_user.balance }} €</strong>
 </span>
 <div class="modal fade" id="addFundsModal" tabindex="-1" role="dialog" aria-labelledby="addFundsModalLabel" aria-hidden="true">
@@ -69,55 +70,106 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="cashOutModal" tabindex="-1" role="dialog" aria-labelledby="cashOutModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="cashOutForm" method="POST" action="{{ url_for('users.cash_out') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cashOutModalLabel">Cash Out</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="cashout-dropin-container"></div> <!-- Drop-in UI for cash out -->
+                    <input type="hidden" name="payment_method_nonce" id="cashout-payment-method-nonce">
+                    <div class="form-group mt-3">
+                        <label for="cashout-amount">Enter Amount (€):</label>
+                        <input type="number" class="form-control" id="cashout-amount" name="amount" min="1" step="0.01" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" id="submit-cashout" class="btn btn-primary">Cash Out</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <script src="https://js.braintreegateway.com/web/dropin/1.33.6/js/dropin.min.js"></script>
 <script>
-    let dropinInstance;
+    // Store instances for each modal
+    let dropinInstances = {};
 
     // Function to initialize Braintree Drop-in UI
-    function initializeDropin(clientToken) {
-        if (dropinInstance) {
-            // If Drop-in instance already exists, destroy it
-            dropinInstance.teardown(() => {
-                createDropin(clientToken);
+    function initializeDropin(containerId, clientToken, submitButtonId, formId) {
+        // Check if the Drop-in UI is already initialized for the container
+        if (dropinInstances[containerId]) {
+            dropinInstances[containerId].teardown(() => {
+                createDropin(containerId, clientToken, submitButtonId, formId);
             });
         } else {
-            createDropin(clientToken);
+            createDropin(containerId, clientToken, submitButtonId, formId);
         }
     }
 
-    function createDropin(clientToken) {
+    function createDropin(containerId, clientToken, submitButtonId, formId) {
         braintree.dropin.create({
             authorization: clientToken,
-            container: "#dropin-container"
+            container: `#${containerId}`
         }, function (err, instance) {
             if (err) {
-                console.error("Drop-in creation failed:", err);
+                console.error(`Drop-in creation failed for container ${containerId}:`, err);
                 return;
             }
-            dropinInstance = instance;
-            document.getElementById("submit-payment").addEventListener("click", function () {
+            dropinInstances[containerId] = instance;
+
+            // Handle form submission
+            document.getElementById(submitButtonId).addEventListener("click", function () {
                 instance.requestPaymentMethod(function (err, payload) {
                     if (err) {
                         console.error("Payment method request failed:", err);
                         return;
                     }
-                    document.getElementById("payment-method-nonce").value = payload.nonce;
-                    document.getElementById("addFundsForm").submit();
+                    // Add the nonce to the form and submit
+                    document.querySelector(`#${formId} input[name="payment_method_nonce"]`).value = payload.nonce;
+                    document.getElementById(formId).submit();
                 });
             });
         });
     }
 
-    // Event listener for modal open
+    // Event listener for Add Funds modal
     $('#addFundsModal').on('shown.bs.modal', function () {
-        // Fetch client token from backend (only necessary if it changes dynamically)
         fetch("{{ url_for('users.get_client_token') }}")
             .then(response => response.json())
             .then(data => {
-                initializeDropin(data.client_token);
+                initializeDropin(
+                    "dropin-container", // Drop-in container ID
+                    data.client_token,
+                    "submit-payment",   // Submit button ID
+                    "addFundsForm"      // Form ID
+                );
             })
             .catch(err => {
-                console.error("Error fetching client token:", err);
+                console.error("Error fetching client token for Add Funds:", err);
+            });
+    });
+
+    // Event listener for Cash Out modal
+    $('#cashOutModal').on('shown.bs.modal', function () {
+        fetch("{{ url_for('users.get_client_token') }}")
+            .then(response => response.json())
+            .then(data => {
+                initializeDropin(
+                    "cashout-dropin-container", // Drop-in container ID
+                    data.client_token,
+                    "submit-cashout",          // Submit button ID
+                    "cashOutForm"              // Form ID
+                );
+            })
+            .catch(err => {
+                console.error("Error fetching client token for Cash Out:", err);
             });
     });
 </script>

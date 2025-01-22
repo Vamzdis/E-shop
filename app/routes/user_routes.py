@@ -158,10 +158,11 @@ def user_dashboard():
 @login_required
 def show_transactions():
     if current_user.is_admin:
+        # Admins see all transactions
         transactions = Transaction.query.all()
         return render_template('admin/view_all_transactions.html', transactions=transactions)  # Admin template
     else:
-        # Regular user sees only their own orders
+        # Regular user sees only their own transactions
         transactions = Transaction.query.filter_by(user_id=current_user.id).all()
         return render_template('user/user_transactions.html', transactions=transactions)
 
@@ -192,7 +193,6 @@ def add_balance():
         amount = request.form.get('amount')
         nonce = request.form.get('payment_method_nonce')
 
-        # Validate input
         if not amount or not nonce:
             flash("Invalid input. Please try again.", "danger")
             return redirect(url_for('users.user_dashboard'))
@@ -202,8 +202,7 @@ def add_balance():
         if amount <= 0:
             flash("Amount must be greater than 0.", "danger")
             return redirect(url_for('users.user_dashboard'))
-
-        # Process the payment with Braintree
+        
         result = gateway.transaction.sale({
             "amount": f"{amount:.2f}",
             "payment_method_nonce": nonce,
@@ -216,14 +215,12 @@ def add_balance():
             # Update user's balance
             current_user.balance += amount
 
-            # Log the transaction
             transaction = Transaction(user_id=current_user.id, sum=amount, status="Completed")
             db.session.add(transaction)
             db.session.commit()
 
             flash(f"Successfully added {amount}€ to your balance!", "success")
         else:
-            # Log the failed transaction
             transaction = Transaction(user_id=current_user.id, sum=amount, status="Failed")
             db.session.add(transaction)
             db.session.commit()
@@ -233,9 +230,45 @@ def add_balance():
     except ValueError:
         flash("Invalid amount entered. Please enter a valid number.", "danger")
     except Exception as e:
-        # Log the error for debugging
         print(f"Error during add_balance: {e}")
         flash("An error occurred. Please try again later.", "danger")
 
-    # Ensure the response always redirects back to the dashboard
+    return redirect(url_for('users.user_dashboard'))
+
+
+@bp.route('/cash_out', methods=['POST'])
+@login_required
+def cash_out():
+    try:
+        amount = request.form.get('amount')
+
+        if not amount:
+            flash("Invalid input. Please try again.", "danger")
+            return redirect(url_for('users.user_dashboard'))
+
+        amount = float(amount)
+
+        if amount <= 0:
+            flash("Amount must be greater than 0.", "danger")
+            return redirect(url_for('users.user_dashboard'))
+
+        # Check if user has sufficient balance
+        if current_user.balance < amount:
+            flash("Insufficient balance to complete the cash out.", "danger")
+            return redirect(url_for('users.user_dashboard'))
+
+        # Deduct amount from user's balance
+        current_user.balance -= amount
+
+        transaction = Transaction(user_id=current_user.id, sum=-amount, status="Completed")
+        db.session.add(transaction)
+        db.session.commit()
+
+        flash(f"Successfully cashed out {amount}€ from your balance!", "success")
+    except ValueError:
+        flash("Invalid amount entered. Please enter a valid number.", "danger")
+    except Exception as e:
+        print(f"Error during cash_out: {e}")
+        flash("An error occurred. Please try again later.", "danger")
+
     return redirect(url_for('users.user_dashboard'))
