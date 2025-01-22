@@ -135,3 +135,15 @@ margin-right: auto;
     transition: .2s;
     transform: scale(1.30)
 }
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+#page-number {
+    font-size: 1.2em;
+    font-weight: bold;
+}

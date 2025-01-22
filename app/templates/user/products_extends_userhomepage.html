@@ -8,7 +8,7 @@
         <div class="row">
 
             {% for product in products %}
-            <div class="col-md-4 mb-4">
+            <div class="col-md-4 mb-4 product-card">
                 <div class="card h-100">
                     <div class="product-img my-3">
                         <img src="{{ url_for('static', filename= 'uploads/' ~ product.picture) }}" class="card-img-top" alt="{{ product.name }}">
@@ -34,8 +34,38 @@
             </div>
             {% endfor %}
         </div>
-
+        <div class="pagination-controls text-center my-4">
+            <button id="prev-btn" class="btn btn-primary" onclick="changePage(-1)">Previous</button>
+            <span id="page-number" class="mx-3">Page 1</span>
+            <button id="next-btn" class="btn btn-primary" onclick="changePage(1)">Next</button>
+        </div>
       </div>
 </div>
 <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
+<script>
+    const products = document.querySelectorAll('.product-card');
+    const productsPerPage = 9;
+    let currentPage = 1;
+
+    function renderPage() {
+        const start = (currentPage - 1) * productsPerPage;
+        const end = currentPage * productsPerPage;
+
+        products.forEach((product, index) => {
+            product.style.display = index >= start && index < end ? 'block' : 'none';
+        });
+
+        document.getElementById('page-number').innerText = `Page ${currentPage}`;
+
+        document.getElementById('prev-btn').disabled = currentPage === 1;
+        document.getElementById('next-btn').disabled = end >= products.length;
+    }
+
+    function changePage(direction) {
+        currentPage += direction;
+        renderPage();
+    }
+
+    renderPage();
+</script>
 {% endblock %}
