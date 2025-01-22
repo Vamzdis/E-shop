@@ -12,12 +12,5 @@ class Order(db.Model):
     user = db.relationship("User", back_populates="orders")
     order_items = db.relationship("OrderItem", back_populates="order")
 
-
-    def __init__(self, id : int, user_id : int, purchase_price : float, created_on : datetime=None):
-        self.id = id
-        self.user_id = user_id
-        self.purchase_price = purchase_price
-        self.created_on = created_on 
-
     def __repr__(self):
         pass
