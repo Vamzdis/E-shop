@@ -13,11 +13,12 @@
                 <tr>
                     <th>#</th>
                     <th>Transaction ID</th>
-                    <th>User</th>
+                    <th>User ID</th>
                     <th>Email</th>
                     <th>Date</th>
                     <th>Amount</th>
                     <th>Status</th>
+                    <th>Type</th>
                 </tr>
             </thead>
             <tbody>
@@ -25,7 +26,7 @@
                 <tr>
                     <td>{{ loop.index }}</td>
                     <td>{{ transaction.id }}</td>
-                    <td>{{ transaction.user.name }}</td>
+                    <td>{{ transaction.user.id }}</td>
                     <td>{{ transaction.user.login_email }}</td>
                     <td>{{ transaction.created_on }}</td>
                     <td>€{{ transaction.sum }}</td>
@@ -38,6 +39,17 @@
                             <span class="badge badge-warning">Pending</span>
                         {% else %}
                             <span class="badge badge-secondary">Unknown</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if transaction.type == 'Deposit' %}
+                        <span class="badge badge-dark"> Deposit </span>
+                        {% elif transaction.type == 'Cash out' %}
+                        <span class="badge badge-info"> Cash out </span>
+                        {% elif transaction.status == 'Order payment' %}
+                        <span class="badge badge-primary"> Order payment </span>
+                        {% else %}
+                        <span class="badge badge-secondary"> Unknown</span>
                         {% endif %}
                     </td>
                 </tr>
