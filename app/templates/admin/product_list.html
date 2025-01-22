@@ -32,21 +32,34 @@
                 <td><img src="{{ url_for('static', filename='uploads/' + product.picture) }}" alt="{{ product.name }}" width="100"></td>
                 <td>{{ product.quantity }}</td>
                 <td>{{ product.rating }}</td>
-                <td>{% if product.is_available %}
+                <td>
+                    {% if product.is_deleted %}
+                    <span class="badge badge-danger">Deleted</span>
+                    {% elif product.is_available %}
                     <span class="badge badge-success">Available</span>
                     {% else %}
-                    <span class="badge badge-secondary">Unavailable</span>
+                    <span class="badge badge-secondary">Out of stock</span>
                     {% endif %}</td>
                 <td>{{ product.created_on }}</td>
                 <td>
+                    {% if product.is_deleted == False %}
                     <a href="{{ url_for('admin.edit_product', id=product.id) }}" class="btn btn-sm btn-warning" style="margin-right: 5px;">Edit</a>
                     <form action="{{ url_for('admin.delete_product', id=product.id) }}" method="post" onsubmit="return confirmDelete()" style="margin: 0;">
                         <button class="btn btn-sm btn-danger" type="submit">Delete</button>
                     </form>
+                    {% endif %}
+                    {% if product.is_deleted == True %}
+                    <form action="{{ url_for('admin.restore_product', id=product.id) }}" method="post" onsubmit="return confirmRestore()" style="margin: 0;">
+                        <button class="btn btn-sm btn-secondary" type="submit">Restore</button>
+                    </form>
+                    {% endif %}
                 </td>
                     <script>
                         function confirmDelete() {
-                            return confirm('Ar tikrai norite ištrinti šį produktą?');
+                            return confirm('Confirm delete?');
+                        }
+                        function confirmRestore() {
+                            return confirm('Confirm restore?');
                         }
                     </script>
                 </td>

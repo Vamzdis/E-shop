@@ -2,6 +2,8 @@ from flask import Flask as fl
 from flask_login import LoginManager
 from config import Config as cfg
 
+from flask_login import LoginManager, login_required, current_user
+
 from app.models.cart_item import CartItem
 from app.models.order_item import OrderItem
 from app.models.order import Order
@@ -13,6 +15,7 @@ from app.models.transaction import Transaction
 from app.routes import shop_routes
 from app.routes import user_routes
 from app.routes import admin_routes
+from app.routes import cart
 
 login_manager = LoginManager() 
 
@@ -34,6 +37,8 @@ def create_app():
     app.register_blueprint(shop_routes.bp)
     app.register_blueprint(user_routes.bp)
     app.register_blueprint(admin_routes.admin)
+    app.register_blueprint(cart.bp)
+
 
     return app
 
