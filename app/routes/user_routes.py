@@ -215,7 +215,7 @@ def add_balance():
             # Update user's balance
             current_user.balance += amount
 
-            transaction = Transaction(user_id=current_user.id, sum=amount, status="Completed")
+            transaction = Transaction(user_id=current_user.id, sum=amount, status="Completed", type = "Deposit")
             db.session.add(transaction)
             db.session.commit()
 
@@ -260,7 +260,7 @@ def cash_out():
         # Deduct amount from user's balance
         current_user.balance -= amount
 
-        transaction = Transaction(user_id=current_user.id, sum=-amount, status="Completed")
+        transaction = Transaction(user_id=current_user.id, sum=-amount, status="Completed", type = "Cash out")
         db.session.add(transaction)
         db.session.commit()
 
@@ -272,3 +272,8 @@ def cash_out():
         flash("An error occurred. Please try again later.", "danger")
 
     return redirect(url_for('users.user_dashboard'))
+
+@bp.route('/order_payment', methods=['POST'])
+@login_required
+def pay_for_order():
+    pass
