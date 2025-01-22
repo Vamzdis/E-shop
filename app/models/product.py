@@ -21,6 +21,7 @@ class Product(db.Model):
 
 
     def __init__(self, name, description, price, picture, quantity, rating, is_available, is_deleted, created_on=None):
+    def __init__(self, name, description, price, picture, quantity, is_available, rating, is_deleted, created_on=None):
         self.name = name
         self.description = description
         self.price = price
@@ -30,6 +31,7 @@ class Product(db.Model):
         self.created_on = created_on
         self.is_available = is_available
         self.is_deleted = is_deleted
+        self.rating = rating
 
     def __repr__(self):
         return f" Product: {self.name}, price - {self.price}, description - {self.description}"
