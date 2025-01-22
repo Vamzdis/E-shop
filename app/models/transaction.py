@@ -8,14 +8,16 @@ class Transaction(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     sum = db.Column(db.Float)
     status = db.Column(db.String(255), default = "Pending")
+    type = db.Column(db.String(255), default = "Deposit")
     created_on = db.Column(db.DateTime, default = func.now())
 
     user = db.relationship("User", back_populates="transactions")
 
-    def __init__(self, user_id, sum, status, created_on:datetime=None):
+    def __init__(self, user_id, sum, status:str, type, created_on:datetime=None):
         self.user_id = user_id
-        self.status = status
         self.sum = sum
+        self.status = status
+        self.type = type
         self.created_on = created_on
 
     def __repr__(self):

@@ -10,7 +10,7 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable = False)
     picture = db.Column(db.String(255), nullable = False)
     quantity = db.Column(db.Integer, nullable = False)
-    rating = db.Column(db.Float, nullable = True)
+    rating = db.Column(db.Integer, nullable = True)
     is_available = db.Column(db.Boolean, default = False, nullable = False)
     is_deleted = db.Column(db.Boolean, default = False, nullable = False)
     created_on = db.Column(db.DateTime, default = func.now())
@@ -30,7 +30,7 @@ class Product(db.Model):
         self.rating = rating
         self.is_available = is_available
         self.is_deleted = is_deleted
-        self.created_on = created_on
+        self.rating = rating
 
     def __repr__(self):
         return f" Product: {self.name}, price - {self.price}, description - {self.description}"

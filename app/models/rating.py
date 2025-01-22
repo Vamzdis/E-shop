@@ -13,10 +13,6 @@ class Rating(db.Model):
     product = db.relationship("Product", back_populates="ratings")
     user = db.relationship("User", back_populates="ratings")
 
-    def __init__(self, rating, created_on=None):
-        self.rating = rating
-        self.created_on = created_on
-
     def __repr__(self):
         pass
 

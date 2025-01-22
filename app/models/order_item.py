@@ -10,12 +10,5 @@ class OrderItem(db.Model):
     order = db.relationship("Order", back_populates="order_items")
     product = db.relationship("Product", back_populates="order_items")
 
-
-    def __init__(self, id : int, user_id : int, purchase_price : float):
-        self.id = id
-        self.user_id = user_id
-        self.purchase_price = purchase_price
-
-
     def __repr__(self):
         pass
