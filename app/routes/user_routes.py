@@ -85,11 +85,11 @@ def register():
         password = form.password.data
         
         password_hash = generate_password_hash(password) 
-        new_user = User(name, surname, login_email, password_hash)
+        new_user = User(name=name, last_name=surname, login_email=login_email, password=password_hash)
         db.session.add(new_user)
         db.session.commit()
 
-        flash(f"Welcome {name}! Your registration is successful, you can now log in")
+        flash(f"Welcome {name}! Your registration is successful, you can now log in", "success")
         return redirect(url_for('users.login'))
       
     return render_template('user/user_register_extends_base.html', form=form)
@@ -111,7 +111,7 @@ def login():
                 return render_template('user/user_login_extends_base.html', form=form)
             
             login_user(user)  # user login using flask-login built in function
-
+            flash("You have successfully logged in!", "success")
             return redirect(url_for('users.dashboard'))
         else:
             flash("Invalid email or password")
@@ -124,7 +124,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash("You have successfully logged out!")
+    flash("You have successfully logged out!", "success")
     return redirect(url_for('users.login'))
 
 
