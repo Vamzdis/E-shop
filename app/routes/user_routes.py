@@ -3,6 +3,7 @@ from sqlalchemy import or_, and_
 from app.database import db
 from app.models.user import User
 from app.models.order import Order
+from app.models.product import Product
 from app.models.transaction import Transaction
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -69,10 +70,6 @@ def get_client_token():
     client_token = gateway.client_token.generate()
     return jsonify({"client_token": client_token})
 
-@bp.route('/users')
-def home():
-    return render_template('user/user_index.html')
-
 @bp.route('/register', methods = ['GET','POST'])
 def register():
 
@@ -127,6 +124,14 @@ def logout():
     flash("You have successfully logged out!", "success")
     return redirect(url_for('users.login'))
 
+@bp.route("/user_homepage")
+@login_required
+def user_homepage():
+    products = Product.query.filter_by(is_deleted=False).all()
+    if current_user.is_admin:
+        return redirect(url_for('users.admin_dashboard'))
+    return render_template("user/products_extends_userhomepage.html", products=products)
+
 
 @bp.route('/dashboard')
 @login_required
@@ -134,7 +139,7 @@ def dashboard():
     if current_user.is_admin:
         return redirect(url_for('users.admin_dashboard'))
     else:
-        return redirect(url_for('users.user_dashboard'))
+        return redirect(url_for('users.user_homepage'))
     
 
 @bp.route('/admin_dashboard')

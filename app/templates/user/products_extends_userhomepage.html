@@ -1,0 +1,41 @@
+{% extends "user/user_homepage.html" %}
+
+{% block title %}Products{% endblock %}
+{% block content %}
+<div id="product-list">
+    <div class="container">
+
+        <div class="row">
+
+            {% for product in products %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="product-img my-3">
+                        <img src="{{ url_for('static', filename= 'uploads/' ~ product.picture) }}" class="card-img-top" alt="{{ product.name }}">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+
+                        <p class="card-text text-muted">Price: ${{ product.price }}</p>
+
+                    <!-- UPDATE THIS! When we will have proper rating-->
+                        <p class="card-text text-muted">Rating: {{ product.rating }}</p>
+
+                        <div id="add-to-cart-btn-container">
+
+                            <button class="btn btn-success" onclick="addToCart('{{ product.id }}')">
+                                Add to cart
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        </div>  
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+      </div>
+</div>
+<script src="{{ url_for('static', filename='js/cart.js') }}"></script>
+{% endblock %}
