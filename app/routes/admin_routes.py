@@ -6,6 +6,7 @@ from sqlalchemy import func
 from app.models.user import User
 from werkzeug.utils import secure_filename
 from config import Config
+from werkzeug.security import generate_password_hash
 import os
 
 
@@ -167,20 +168,45 @@ def delete_user(id):
     user = User.query.get(id)
 
     if not user:
-        return "User not found", 404
+        flash('User not found','danger')
+        return redirect(request.url)
     
     if request.method == "POST":
         user.is_deleted = True
         db.session.commit()
-        return redirect(url_for("..."))             #add template
+        return redirect(url_for("users.show_users"))             #add template
     else:
-        return render_template("...", user = user)  #add template
+        return render_template("admin/view_users.html", user = user)  #add template
+
+
+@admin.route("/edit_user/<int:id>", methods = ["GET", "POST"])
+def edit_user(id):
+    user = User.query.get(id)
+
+    if not user:
+        flash("User not found",'danger')
+        return redirect(url_for("users.show_users"))
     
+    if request.method == "POST":
+        try:
+            user.name = request.form["name"]
+            user.last_name = request.form["last_name"]
+            user.login_email = request.form["login_email"]
+            password = request.form["password"]
+            
+            user.password_hash = generate_password_hash(password)
+
+            db.session.commit()
+            flash("Entry edited successsfully", "success")      
+        except:
+            flash("smoething went wrong, check input", 'danger')
+            return redirect(request.url) 
+        return redirect(url_for("users.show_users"))    #add url
+    else:
+        return render_template("admin/edit_user.html", user = user)
 
 # Administratoriaus galimybės
 
-
-# Papildyti esamų prekių kiekį
 
 # Peržiūrėti statistika apie prekes. Kiek prekių nupirkta kurią dieną, už kiek nupirkta,
 # kurie mėnesiai pelningiausi, kurios prekės geriausiai įvertintos
