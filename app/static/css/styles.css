@@ -118,8 +118,20 @@ margin-right: auto;
     justify-content: center;
     align-items: center;
     margin: 0 auto;
+    opacity: 0.90;
 }
 .product-img img {
     height: 200px;
     object-fit: cover;
+}
+
+.product-img hover{
+    opacity: 1.0;
+}
+
+.product-img:hover,
+.product-img:focus
+{
+    transition: .2s;
+    transform: scale(1.30)
 }
