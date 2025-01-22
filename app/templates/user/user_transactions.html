@@ -26,11 +26,11 @@
                     <td>{{ transaction.created_on }}</td>
                     <td>€{{ transaction.sum }}</td>
                     <td>
-                        {% if transaction.status == 'completed' %}
+                        {% if transaction.status == 'Completed' %}
                             <span class="badge badge-success">Completed</span>
-                        {% elif transaction.status == 'failed' %}
+                        {% elif transaction.status == 'Failed' %}
                             <span class="badge badge-danger">Failed</span>
-                        {% elif transaction.status == 'pending' %}
+                        {% elif transaction.status == 'Pending' %}
                             <span class="badge badge-warning">Pending</span>
                         {% else %}
                             <span class="badge badge-secondary">Unknown</span>

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, abort
+from flask import Blueprint, render_template, redirect, url_for, flash, abort, request, jsonify
 from sqlalchemy import or_, and_
 from app.database import db
 from app.models.user import User
@@ -9,6 +9,16 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf import FlaskForm 
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, Regexp, ValidationError
+import braintree
+
+gateway = braintree.BraintreeGateway(
+    braintree.Configuration(
+        environment=braintree.Environment.Sandbox,
+        merchant_id="t7mvc2hrv49kmwg2",
+        public_key="mgp382dhthfvqr6q",
+        private_key="eb3626bf4b2a07916a35a3fdd94ee293"
+    )
+)
 
 #custom validator at registration to check if the email has already been registered
 class EmailRegistered(object):
@@ -53,6 +63,12 @@ class LoginForm(FlaskForm):
 
 bp = Blueprint('users', __name__)
 
+@bp.route('/get_client_token', methods=['GET'])
+@login_required
+def get_client_token():
+    client_token = gateway.client_token.generate()
+    return jsonify({"client_token": client_token})
+
 @bp.route('/users')
 def home():
     return render_template('user/user_index.html')
@@ -96,7 +112,6 @@ def login():
             
             login_user(user)  # user login using flask-login built in function
 
-            flash("Login successful.")
             return redirect(url_for('users.dashboard'))
         else:
             flash("Invalid email or password")
@@ -135,7 +150,8 @@ def admin_dashboard():
 def user_dashboard():
     if current_user.is_admin:
         return redirect(url_for('users.admin_dashboard'))
-    return render_template('user/user_layout.html') 
+    client_token = gateway.client_token.generate()
+    return render_template('user/user_layout.html', client_token=client_token) 
 
 
 @bp.route('/transactions')
@@ -168,3 +184,58 @@ def show_orders():
         # Regular user sees only their own orders
         orders = Order.query.filter_by(user_id=current_user.id).all()
         return render_template('user/view_orders.html', orders=orders)
+    
+@bp.route('/add_balance', methods=['POST'])
+@login_required
+def add_balance():
+    try:
+        amount = request.form.get('amount')
+        nonce = request.form.get('payment_method_nonce')
+
+        # Validate input
+        if not amount or not nonce:
+            flash("Invalid input. Please try again.", "danger")
+            return redirect(url_for('users.user_dashboard'))
+
+        amount = float(amount)
+
+        if amount <= 0:
+            flash("Amount must be greater than 0.", "danger")
+            return redirect(url_for('users.user_dashboard'))
+
+        # Process the payment with Braintree
+        result = gateway.transaction.sale({
+            "amount": f"{amount:.2f}",
+            "payment_method_nonce": nonce,
+            "options": {
+                "submit_for_settlement": True
+            }
+        })
+
+        if result.is_success:
+            # Update user's balance
+            current_user.balance += amount
+
+            # Log the transaction
+            transaction = Transaction(user_id=current_user.id, sum=amount, status="Completed")
+            db.session.add(transaction)
+            db.session.commit()
+
+            flash(f"Successfully added {amount}€ to your balance!", "success")
+        else:
+            # Log the failed transaction
+            transaction = Transaction(user_id=current_user.id, sum=amount, status="Failed")
+            db.session.add(transaction)
+            db.session.commit()
+
+            flash(f"Payment failed: {result.message}", "danger")
+
+    except ValueError:
+        flash("Invalid amount entered. Please enter a valid number.", "danger")
+    except Exception as e:
+        # Log the error for debugging
+        print(f"Error during add_balance: {e}")
+        flash("An error occurred. Please try again later.", "danger")
+
+    # Ensure the response always redirects back to the dashboard
+    return redirect(url_for('users.user_dashboard'))
