@@ -11,10 +11,6 @@ class Transaction(db.Model):
 
     user = db.relationship("User", back_populates="transactions")
 
-    def __init__(self, sum, created_on:datetime=None):
-        self.sum = sum
-        self.created_on = created_on
-
     def __repr__(self):
         pass
     
