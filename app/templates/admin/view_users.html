@@ -42,23 +42,29 @@
                     </td>
                     <td>
                         {% if not user.is_deleted and user.is_active %}
-                            <a href="{{ url_for('admin.edit_user', id=user.id) }}" class="btn btn-sm btn-info">Edit</a>
-                            {% if not user.is_admin %}
-                                <form action="{{ url_for('admin.delete_user', id=user.id) }}" method="post" onclick="return confirm('Are you sure you want to delete this user?');">
-                                    <button class="btn btn-sm btn-danger" type="submit">Delete</button>
-                                </form>
-                                <form action="{{ url_for('admin.block_user', id=user.id) }}" method="post" onclick="return confirm('Are you sure you want to block this user?');">
-                                    <button class="btn btn-sm btn-warning" type="submit">Block</button>
-                                </form>
-                            {% endif %}
+                            <div class = "user-btns">
+                                <a href="{{ url_for('admin.edit_user', id=user.id) }}" class="btn btn-sm btn-info">Edit</a>
+                                {% if not user.is_admin %}
+                                    <form action="{{ url_for('admin.delete_user', id=user.id) }}" method="post" onclick="return confirm('Are you sure you want to delete this user?');">
+                                        <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                                    </form>
+                                    <form action="{{ url_for('admin.block_user', id=user.id) }}" method="post" onclick="return confirm('Are you sure you want to block this user?');">
+                                        <button class="btn btn-sm btn-warning" type="submit">Block</button>
+                                    </form>
+                                {% endif %}
+                            </div>
                         {% elif user.is_active == False %}
-                        <form action="{{ url_for('admin.unblock_user', id=user.id) }}" method="post" onclick="return confirm('Are you sure you want to unblock this user?');">
-                            <button class="btn btn-sm btn-secondary" type="submit">Unblock</button>
-                            </form>
+                            <div class="user-btns">
+                                <form action="{{ url_for('admin.unblock_user', id=user.id) }}" method="post" onclick="return confirm('Are you sure you want to unblock this user?');">
+                                    <button class="btn btn-sm btn-secondary" type="submit">Unblock</button>
+                                    </form>
+                            </div>      
                         {% elif user.is_deleted %}
-                        <form action="{{ url_for('admin.restore_user', id=user.id) }}" method="post" onclick="return confirm('Are you sure you want to restore this user?');">
-                            <button class="btn btn-sm btn-secondary" type="submit">Restore</button>
-                            </form>
+                            <div class = "user-btns">
+                                <form action="{{ url_for('admin.restore_user', id=user.id) }}" method="post" onclick="return confirm('Are you sure you want to restore this user?');">
+                                    <button class="btn btn-sm btn-secondary" type="submit">Restore</button>
+                                    </form>
+                            </div>
                         {% endif %}
                     </td>
                 </tr>
