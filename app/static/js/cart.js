@@ -2,12 +2,13 @@ function addToCart(productId) {
     if (!userLoggedIn) {
         alert("Please log in to add products to your cart.");
 
-        // Redirecting to login page. Got to make sure the cart addition continues to run after logging in
-        window.location.href = `/login?next=/add_to_cart/${productId}`;   return; //do I need this if I want to add the item into the cart after the login?
+        // Redirecting to login page. Got to make sure the cart addition continues with add_to_cart route
+        window.location.href = `/login?next=/cart/add_to_cart/${productId}`;   
+        return;
     }
 
     fetch(`/add_to_cart/${productId}`, {
-        // method: 'POST',
+        // method: 'POST',.
         // headers: {
         //     'Content-Type': 'application/json',
         // },
