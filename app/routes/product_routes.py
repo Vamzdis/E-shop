@@ -7,4 +7,6 @@ bp = Blueprint("product", __name__)
 @bp.route('/products')
 def products():
     products = Product.query.all()
+
     return render_template('products_extends_base.html', products=products)
+
