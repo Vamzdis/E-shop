@@ -26,7 +26,7 @@ def show():
      .group_by(Product.id)
     
     if current_user.is_authenticated and current_user.is_admin:
-        products = products_query.filter_by(Product.is_deleted==False).all()  
+        products = products_query.filter(Product.is_deleted==False).all()  
 
     else:
     #using filter here because you cant use quantity comparisons in filter by
