@@ -12,7 +12,7 @@
         <tr>
             <th>Order ID</th>
             <th>User ID</th>
-            <th>User name</th>
+            <th>User email</th>
             <th>Purchase Price</th>
             <th>Order Date</th>
             <th>Items</th>
@@ -23,7 +23,7 @@
         <tr>
             <td>{{ order.id }}</td>
             <td>{{ order.user.id }}</td>
-            <td>{{ order.user.name }}</td>    
+            <td>{{ order.user.login_email }}</td>    
             <td>€ {{ order.purchase_price }}</td>
             <td>{{ order.created_on }}</td>
             <td>
