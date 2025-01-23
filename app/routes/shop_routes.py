@@ -1,17 +1,21 @@
 from flask import Blueprint, render_template, request, redirect, url_for
-# from flask import request, redirect, url_for #very likely will need these in the nearby future
+from flask_login import current_user
 
 from app.database import db
 
 from app.models.product import Product
-from app.models.dummies import dummy_products
+from app.models.user import User
 
 bp = Blueprint('shop', __name__)
 
 @bp.route('/')
 def show():
-    products = Product.query.filter_by(is_deleted=False).all()
+
+    if current_user.is_authenticated and current_user.is_admin:
+        products = Product.query.filter_by(is_deleted=False).all()  
+
+    else:
+        #using filter here because you cant use quantity comparisons in filter by
+        products = Product.query.filter(Product.is_deleted == False, Product.quantity > 0 ).all()
+
     return render_template("products_extends_base.html", products=products)
-
-
-    
