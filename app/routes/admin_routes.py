@@ -223,7 +223,7 @@ def restore_user(id):
     if request.method == "POST":
         user.is_deleted = False
         db.session.commit()
-        flash(f"User (ID: {id}) successfully deleted",'success')
+        flash(f"User (ID: {id}) successfully restored",'success')
         return redirect(url_for("admin.show_users"))
     else:
         return render_template("/admin/view_users.html")
