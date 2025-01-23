@@ -111,7 +111,7 @@ def login():
             flash("You have successfully logged in!", "success")
             return redirect(url_for('users.dashboard'))
         else:
-            flash("Invalid email or password")
+            flash("Invalid email or password", "danger")
             return render_template('user/user_login_extends_base.html', form = form)
         
     return render_template('user/user_login_extends_base.html', form = form)
@@ -162,34 +162,14 @@ def user_dashboard():
 @bp.route('/transactions')
 @login_required
 def show_transactions():
-    if current_user.is_admin:
-        # Admins see all transactions
-        transactions = Transaction.query.all()
-        return render_template('admin/view_all_transactions.html', transactions=transactions)  # Admin template
-    else:
-        # Regular user sees only their own transactions
-        transactions = Transaction.query.filter_by(user_id=current_user.id).all()
-        return render_template('user/user_transactions.html', transactions=transactions)
-
-@bp.route('/admin/all_users')
-@login_required
-def show_users():
-    if not current_user.is_admin:
-        abort(403)   
-    users = User.query.all()
-    return render_template('admin/view_users.html', users=users)
+    transactions = Transaction.query.filter_by(user_id=current_user.id).all()
+    return render_template('user/user_transactions.html', transactions=transactions)
 
 @bp.route('/orders')
 @login_required
 def show_orders():
-    if current_user.is_admin:
-        # Admin sees all orders
-        orders = Order.query.all()
-        return render_template('admin/view_orders.html', orders=orders)  # Admin template
-    else:
-        # Regular user sees only their own orders
-        orders = Order.query.filter_by(user_id=current_user.id).all()
-        return render_template('user/view_orders.html', orders=orders)
+    orders = Order.query.filter_by(user_id=current_user.id).all()
+    return render_template('user/view_orders.html', orders=orders)
     
 @bp.route('/add_balance', methods=['POST'])
 @login_required
