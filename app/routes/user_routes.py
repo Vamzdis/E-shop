@@ -247,9 +247,9 @@ def cash_out():
 
 @bp.route('/order_payment', methods=['POST'])
 @login_required
-def pay_for_order():
+def pay_for_order(order_id):
     try:
-        order_id = request.form.get('order_id')
+        # order_id = request.form.get('order_id')
         order = Order.query.get(order_id)
 
         if not order:
