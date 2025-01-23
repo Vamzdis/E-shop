@@ -1,10 +1,11 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, abort, request, jsonify
-from sqlalchemy import or_, and_
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
+from sqlalchemy import or_
 from app.database import db
 from app.models.user import User
 from app.models.order import Order
 from app.models.product import Product
 from app.models.transaction import Transaction
+from app.models.product_cart import ProductCart
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf import FlaskForm 
@@ -245,31 +246,33 @@ def cash_out():
 
     return redirect(url_for('users.dashboard'))
 
-@bp.route('/order_payment', methods=['POST'])
+@bp.route('/order_payment/<int:cart_id>', methods=['POST'])
 @login_required
-def pay_for_order(order_id):
+def pay_for_order(cart_id):
     try:
-        # order_id = request.form.get('order_id')
-        order = Order.query.get(order_id)
+        cart = ProductCart.query.get(cart_id)
 
-        if not order:
-            flash("Order not found.", "danger")
+        if not cart:
+            flash("Following user cart was not found.", "danger")
             return redirect(url_for('users.user_dashboard'))
 
-        # Check if the user has sufficient funds
-        price = order.purchase_price
-        if current_user.balance < price:
+        total_price = sum(item.product.price * item.quantity for item in cart.cart_items)
+
+        if current_user.balance < total_price:
             flash("Insufficient funds. Please add to your balance.", "danger")
-            return redirect(url_for('users.dashboard'))
+            return redirect(url_for('cart.view_cart'))
 
         # Deduct the price from the user's balance
-        current_user.balance -= price
+        current_user.balance -= total_price
 
-        transaction = Transaction(user_id=current_user.id, sum=-price, status="Completed", type = "Order payment")
+        transaction = Transaction(user_id=current_user.id, sum=-total_price, status="Completed", type = "Order payment")
+        order = Order(user_id=current_user.id, purchase_price = total_price)
+        db.session.add(order)
         db.session.add(transaction)
+        db.session.delete(cart)
         db.session.commit()
     
-        flash(f"Successfully paid {price}€ for your order!", "success")
+        flash(f"Successfully paid {total_price}€ for your order!", "success")
     except Exception as e:
         print(f"Error during payment: {e}")
         flash("An error occurred. Please try again later.", "danger")
