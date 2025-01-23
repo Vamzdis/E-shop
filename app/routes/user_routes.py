@@ -102,14 +102,27 @@ def login():
 
         user = User.query.filter_by(login_email=login_email).first()
         
-        if user and check_password_hash(user.password, password):
+        if user:
             if user.is_deleted or not user.is_active:
                 form.email.errors.append("This account is blocked or deleted.")
                 return render_template('user/user_login_extends_base.html', form=form)
+            if user.failed_login_count >= 3:
+                form.email.errors.append("This account is locked due too many incorrect login attempts. Please contact the administrator")
+            if check_password_hash(user.password, password):
+                user.failed_login_count = 0
+                login_user(user)  
+                flash("You have successfully logged in!", "success")
+                db.session.commit()
+                return redirect(url_for('users.dashboard'))
+            else:
+                user.failed_login_count += 1
+                if user.failed_login_count >= 3:
+                    user.is_active = False
+                    form.email.errors.append("This account is locked due too many incorrect login attempts. Please contact the administrator")
+                db.session.commit()
+                flash("Invalid email or password", "danger")
+                return render_template('user/user_login_extends_base.html', form=form)
             
-            login_user(user)  # user login using flask-login built in function
-            flash("You have successfully logged in!", "success")
-            return redirect(url_for('users.dashboard'))
         else:
             flash("Invalid email or password", "danger")
             return render_template('user/user_login_extends_base.html', form = form)
