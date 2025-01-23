@@ -46,6 +46,21 @@ def add_to_cart(product_id):
 
     product.quantity -= 1
     db.session.commit()
-    
+
     flash('Product added to cart.', 'success')
     return redirect(url_for('products'))
+
+@bp.route('/cart/checkout', methods=['POST'])
+@login_required
+def checkout():
+
+    user_id = current_user.id
+    cart = ProductCart.query.filter_by(user_id=user_id).first()
+
+    if not cart or not cart.cart_items:
+        flash('Your cart is empty.', 'info')
+        return redirect(url_for('products'))
+    
+    # purchase handling goes here
+
+    return render_template('cart.html', cart=cart)
