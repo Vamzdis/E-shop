@@ -14,4 +14,7 @@ def show():
     return render_template("products_extends_base.html", products=products)
 
 
-    
+@bp.route("/product/<int:id>")
+def view_product(id):
+    product = Product.query.get(id)
+    return render_template("user/view_product.html", product = product)

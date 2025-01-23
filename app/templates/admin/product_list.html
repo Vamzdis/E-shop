@@ -46,15 +46,19 @@
                 <td>{{ product.created_on }}</td>
                 <td>
                     {% if product.is_deleted == False %}
-                    <a href="{{ url_for('admin.edit_product', id=product.id) }}" class="btn btn-sm btn-warning" style="margin-right: 5px;">Edit</a>
-                    <form action="{{ url_for('admin.delete_product', id=product.id) }}" method="post" onsubmit="return confirmDelete()" style="margin: 0;">
-                        <button class="btn btn-sm btn-danger" type="submit">Delete</button>
-                    </form>
+                    <div class="product-btns">
+                        <a href="{{ url_for('admin.edit_product', id=product.id) }}" class="btn btn-sm btn-warning" style="margin-right: 5px;">Edit</a>
+                        <form action="{{ url_for('admin.delete_product', id=product.id) }}" method="post" onsubmit="return confirmDelete()" style="margin: 0;">
+                            <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                        </form>
+                    </div>
                     {% endif %}
                     {% if product.is_deleted == True %}
-                    <form action="{{ url_for('admin.restore_product', id=product.id) }}" method="post" onsubmit="return confirmRestore()" style="margin: 0;">
-                        <button class="btn btn-sm btn-secondary" type="submit">Restore</button>
-                    </form>
+                    <div class="product-btns">
+                        <form action="{{ url_for('admin.restore_product', id=product.id) }}" method="post" onsubmit="return confirmRestore()" style="margin: 0;">
+                            <button class="btn btn-sm btn-secondary" type="submit">Restore</button>
+                        </form>
+                    </div>
                     {% endif %}
                 </td>
                     <script>

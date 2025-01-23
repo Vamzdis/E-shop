@@ -77,3 +77,10 @@ tr:hover {
     align-items: center;
     justify-content: center;
 }
+
+.product-btns {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+}
