@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_admin.html" %}
 
 {% block title %}Products{% endblock %}
 {% block content %}
@@ -47,14 +47,12 @@
                         {% endif %}
                     </div>
 
-                    <div class="product-actions">
                         <div id="add-to-cart-btn-container">
+
                             <button class="btn btn-success" onclick="addToCart('{{ product.id }}')">
                                 Add to cart
                             </button>
                         </div>
-                        <a href="{{ url_for('shop.view_product', id=product.id) }}" class="btn btn-outline-info"><i class="fas fa-eye"></i> View product</a>
-                    </div>
                     </div>
                 </div>
             </div>

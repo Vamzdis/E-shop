@@ -1,12 +1,10 @@
-{% extends "user/user_homepage.html" %}
+{% extends "user/user_layout.html" %}
 
 {% block title %}Products{% endblock %}
 {% block content %}
 <div id="product-list">
     <div class="container">
-
         <div class="row">
-
             {% for product in products %}
             <div class="col-md-4 mb-4 product-card">
                 <div class="card h-100">
@@ -16,10 +14,36 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ product.name }}</h5>
 
-                        <p class="card-text text-muted">Price: ${{ product.price }}</p>
+                        <p class="card-text text-muted">Price: <strong>{{ product.price }} €</strong></p>
 
                     <!-- UPDATE THIS! When we will have proper rating-->
-                        <p class="card-text text-muted">Rating: {{ product.rating }}</p>
+                    <div class="product-rating mb-2">
+                        {% if product.rating %}
+                            <div class="rating-stars">
+                                {% for i in range(1, 6) %}
+                                    {% if product.rating >= i %}
+                                        <!-- Full star -->
+                                        <i class="fa fa-star"></i>
+                                    {% elif product.rating > (i - 1) and product.rating < i %}
+                                        <!-- Half star -->
+                                        <i class="fa fa-star-half-o"></i>
+                                    {% else %}
+                                        <!-- Empty star -->
+                                        <i class="fa fa-star-o"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="rating-stars">
+                                <!-- Display 5 empty stars if no rating -->
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                            </div>
+                        {% endif %}
+                    </div>
 
                         <div id="add-to-cart-btn-container">
 
@@ -28,16 +52,14 @@
                             </button>
                         </div>
                     </div>
-                    <div class="card-footer">
-                        </div>  
                 </div>
             </div>
             {% endfor %}
         </div>
         <div class="pagination-controls text-center my-4">
-            <button id="prev-btn" class="btn btn-primary" onclick="changePage(-1)">Previous</button>
+            <button id="prev-btn" class="btn" onclick="changePage(-1)">Previous</button>
             <span id="page-number" class="mx-3">Page 1</span>
-            <button id="next-btn" class="btn btn-primary" onclick="changePage(1)">Next</button>
+            <button id="next-btn" class="btn" onclick="changePage(1)">Next</button>
         </div>
       </div>
 </div>

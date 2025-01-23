@@ -1,5 +1,6 @@
 
 from flask import render_template, request, redirect, url_for, Blueprint, current_app, flash
+from flask_login import login_required
 from app.models.product import Product
 from app.models.order import Order
 from app.models.transaction import Transaction
@@ -20,11 +21,18 @@ def allowed_file(filename):
 
 
 @admin.route('/')
+@login_required
 def index():
     return render_template('admin/index.html')
 
+@admin.route('/shop')
+@login_required
+def shop_review():
+    products = Product.query.all()
+    return render_template('products_extends_base_admin.html', products=products)
 
 @admin.route("/add_product", methods = ["GET", "POST"])
+@login_required
 def add_product():
     if request.method == "POST":
         try:
@@ -88,12 +96,14 @@ def add_product():
 
 
 @admin.route("/list_products")
+@login_required
 def list_products():
     products = Product.query.all()
     return render_template("admin/product_list.html", products=products)    
 
 
 @admin.route("/delete_product/<int:id>", methods = ["GET", "POST"])
+@login_required
 def delete_product(id):
     product = Product.query.get(id)
 
@@ -111,6 +121,7 @@ def delete_product(id):
 
 
 @admin.route("/restore_product/<int:id>", methods = ["GET", "POST"])
+@login_required
 def restore_product(id):
     product = Product.query.get(id)
 
@@ -129,6 +140,7 @@ def restore_product(id):
 
 
 @admin.route("/edit_product/<int:id>", methods = ["GET", "POST"])
+@login_required
 def edit_product(id):
     product = Product.query.get(id)
 
@@ -172,12 +184,14 @@ def edit_product(id):
 
 
 @admin.route('/all_users')
+@login_required
 def show_users(): 
     users = User.query.all()
     return render_template('admin/view_users.html', users=users)   
 
 
 @admin.route("/delete_user/<int:id>", methods = ["GET", "POST"])
+@login_required
 def delete_user(id):
     user = User.query.get(id)
 
@@ -195,6 +209,7 @@ def delete_user(id):
 
 
 @admin.route("/edit_user/<int:id>", methods = ["GET", "POST"])
+@login_required
 def edit_user(id):
     user = User.query.get(id)
 
@@ -224,6 +239,7 @@ def edit_user(id):
         return render_template("admin/edit_user.html", user = user)
 
 @admin.route("/restore_user/<int:id>", methods = ["GET", "POST"])
+@login_required
 def restore_user(id):
     user = User.query.get(id)
 
@@ -241,6 +257,7 @@ def restore_user(id):
 
 
 @admin.route("/unblock_user/<int:id>", methods = ["GET", "POST"])
+@login_required
 def unblock_user(id):
     user = User.query.get(id)
 
@@ -251,13 +268,14 @@ def unblock_user(id):
     if request.method == "POST":
         user.is_active = True
         db.session.commit()
-        flash(f"User (ID: {id}) successfully deleted",'success')
+        flash(f"User (ID: {id}) successfully unblocked",'success')
         return redirect(url_for("admin.show_users"))         
     else:
         return render_template("admin/view_users.html", user=user)     
 
 
 @admin.route("/block_user/<int:id>", methods = ["GET", "POST"])
+@login_required
 def block_user(id):
     user = User.query.get(id)
 
@@ -268,17 +286,19 @@ def block_user(id):
     if request.method == "POST":
         user.is_active = False
         db.session.commit()
-        flash(f"User (ID: {id}) successfully deleted",'success')
+        flash(f"User (ID: {id}) successfully blocked",'success')
         return redirect(url_for("admin.show_users"))             
     else:
         return render_template("admin/view_users.html", user = user)
 
 @admin.route("/all_orders")
+@login_required
 def show_orders():
     orders = Order.query.all()
     return render_template('admin/view_orders.html', orders=orders)
 
 @admin.route('/transactions')
+@login_required
 def show_transactions():
     transactions = Transaction.query.all()
     return render_template('admin/view_all_transactions.html', transactions=transactions)  # Admin template

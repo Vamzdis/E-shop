@@ -102,14 +102,27 @@ def login():
 
         user = User.query.filter_by(login_email=login_email).first()
         
-        if user and check_password_hash(user.password, password):
+        if user:
             if user.is_deleted or not user.is_active:
                 form.email.errors.append("This account is blocked or deleted.")
                 return render_template('user/user_login_extends_base.html', form=form)
+            if user.failed_login_count >= 3:
+                form.email.errors.append("This account is locked due too many incorrect login attempts. Please contact the administrator")
+            if check_password_hash(user.password, password):
+                user.failed_login_count = 0
+                login_user(user)  
+                flash("You have successfully logged in!", "success")
+                db.session.commit()
+                return redirect(url_for('users.dashboard'))
+            else:
+                user.failed_login_count += 1
+                if user.failed_login_count >= 3:
+                    user.is_active = False
+                    form.email.errors.append("This account is locked due too many incorrect login attempts. Please contact the administrator")
+                db.session.commit()
+                flash("Invalid email or password", "danger")
+                return render_template('user/user_login_extends_base.html', form=form)
             
-            login_user(user)  # user login using flask-login built in function
-            flash("You have successfully logged in!", "success")
-            return redirect(url_for('users.dashboard'))
         else:
             flash("Invalid email or password", "danger")
             return render_template('user/user_login_extends_base.html', form = form)
@@ -124,41 +137,16 @@ def logout():
     flash("You have successfully logged out!", "success")
     return redirect(url_for('users.login'))
 
-@bp.route("/user_homepage")
-@login_required
-def user_homepage():
-    products = Product.query.filter_by(is_deleted=False).all()
-    if current_user.is_admin:
-        return redirect(url_for('users.admin_dashboard'))
-    return render_template("user/products_extends_userhomepage.html", products=products)
-
-
 @bp.route('/dashboard')
 @login_required
 def dashboard():
     if current_user.is_admin:
-        return redirect(url_for('users.admin_dashboard'))
-    else:
-        return redirect(url_for('users.user_homepage'))
+        return redirect(url_for('admin.index'))
+    products = Product.query.filter_by(is_deleted=False).all()
+    client_token = gateway.client_token.generate()   
+    return render_template('user/products_extends_userlayout.html', products=products, client_token=client_token)    
+    # return redirect(url_for('users.user_dashboard'))
     
-
-@bp.route('/admin_dashboard')
-@login_required
-def admin_dashboard():
-    if not current_user.is_admin:
-        return redirect(url_for('users.dashboard'))
-    return render_template('admin/admin_layout.html') 
-
-
-@bp.route('/user_dashboard')
-@login_required
-def user_dashboard():
-    if current_user.is_admin:
-        return redirect(url_for('users.admin_dashboard'))
-    client_token = gateway.client_token.generate()
-    return render_template('user/user_layout.html', client_token=client_token) 
-
-
 @bp.route('/transactions')
 @login_required
 def show_transactions():
