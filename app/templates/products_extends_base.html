@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 
 {% block title %}Products{% endblock %}
+
+
 {% block content %}
-<div id="product-list">
+<div id="product-list" data-user-logged-in="{{ 'true' if current_user.is_authenticated else 'false' }}">
     <div class="container">
         <div class="row">
             {% for product in products %}
@@ -48,13 +50,16 @@
                             </div>
                         {% endif %}
                     </div>
+                    
 
                         <div id="add-to-cart-btn-container">
 
-                            <button class="btn btn-success" onclick="addToCart('{{ product.id }}')">
-                                Add to cart
-                            </button>
+                            <form action="{{ url_for('cart.add_to_cart', product_id=product.id) }}" method="post" style="display: inline;">
+                                <button type="submit" class="btn btn-success">Add to cart</button>
+                            </form>
+
                         </div>
+
                     </div>
                 </div>
             </div>
