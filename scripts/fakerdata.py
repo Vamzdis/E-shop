@@ -142,13 +142,15 @@ with app.app_context():
 
     def create_fake_transactions(count=50):
         users = User.query.all()
-
+ 
         for _ in range(count):
             transaction = Transaction(
                 user_id=random.choice(users).id,
                 sum=round(random.uniform(10.0, 1000.0), 2),  # Generuojama atsitiktinė suma
-                created_on=fake.date_time_between(start_date="-1y", end_date="now")
-            )
+                created_on=fake.date_time_between(start_date="-1y", end_date="now"),
+                status="Completed",
+                type="Order Payment")
+        
             db.session.add(transaction)
         db.session.commit()
         print(f"{count} transaction created")
