@@ -15,7 +15,7 @@ from app.models.transaction import Transaction
 from app.routes import shop_routes
 from app.routes import user_routes
 from app.routes import admin_routes
-from app.routes import cart
+from app.routes import cart_routes
 
 login_manager = LoginManager() 
 
@@ -28,7 +28,8 @@ def create_app():
     migrate.init_app(app,db)
 
     login_manager.init_app(app)  
-    login_manager.login_view = 'user_routes.login'
+    login_manager.login_view = 'users.login'
+    login_manager.login_message_category = "danger" 
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -37,7 +38,7 @@ def create_app():
     app.register_blueprint(shop_routes.bp)
     app.register_blueprint(user_routes.bp)
     app.register_blueprint(admin_routes.admin)
-    app.register_blueprint(cart.bp)
+    app.register_blueprint(cart_routes.bp)
 
 
     return app

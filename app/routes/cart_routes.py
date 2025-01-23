@@ -24,10 +24,11 @@ def view_cart():
 @bp.route('/add_to_cart/<int:product_id>', methods=['POST'])
 @login_required
 def add_to_cart(product_id):
+
     user_id = current_user.id
     product = Product.query.get(product_id)
     if not product or product.quantity <= 0:
-        flash('Product is not available.', 'danger')
+        flash('Product is out of stock.', 'danger')
         return redirect(url_for('products'))
 
     cart = ProductCart.query.filter_by(user_id=user_id).first()
@@ -45,5 +46,6 @@ def add_to_cart(product_id):
 
     product.quantity -= 1
     db.session.commit()
+    
     flash('Product added to cart.', 'success')
     return redirect(url_for('products'))
