@@ -199,14 +199,6 @@ i.fa-star-o {
     color: #c9c9c9;
 }
 
-.product-actions {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-content: center;
-    justify-content: space-evenly;
-    align-items: center;
-}
 .balance-container {
     display: inline-flex;         
     align-items: center;          
