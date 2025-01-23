@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "user/user_layout.html" %}
  
 {% block title %}{{product.name}}{% endblock %}
  
@@ -46,7 +46,7 @@
                 <strong>{{ product.price }} € </strong>
             </div>
                 <a href="{{url_for('users.dashboard')}}" class="btn btn-outline-info"><i class="fas fa-chevron-left"></i> Back to Shop</a>
-                <a href="/" class="btn btn-outline-warning"></i>Rate this item</a>
+                <a href="#" class="btn btn-outline-warning"></i>Rate this item</a>
         </div>  
     </div>    
 </section>
