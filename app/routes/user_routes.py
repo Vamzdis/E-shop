@@ -109,9 +109,9 @@ def login():
             
             login_user(user)  # user login using flask-login built in function
             flash("You have successfully logged in!", "success")
-            return redirect(url_for('users.dashboard'))
+            return redirect(url_for('users.user_dashboard'))
         else:
-            flash("Invalid email or password")
+            flash("Invalid email or password", "danger")
             return render_template('user/user_login_extends_base.html', form = form)
         
     return render_template('user/user_login_extends_base.html', form = form)
@@ -124,29 +124,11 @@ def logout():
     flash("You have successfully logged out!", "success")
     return redirect(url_for('users.login'))
 
-@bp.route("/user_homepage")
-@login_required
-def user_homepage():
-    products = Product.query.filter_by(is_deleted=False).all()
-    if current_user.is_admin:
-        return redirect(url_for('users.admin_dashboard'))
-    return render_template("user/products_extends_userhomepage.html", products=products)
-
-
-@bp.route('/dashboard')
-@login_required
-def dashboard():
-    if current_user.is_admin:
-        return redirect(url_for('users.admin_dashboard'))
-    else:
-        return redirect(url_for('users.user_homepage'))
-    
-
 @bp.route('/admin_dashboard')
 @login_required
 def admin_dashboard():
     if not current_user.is_admin:
-        return redirect(url_for('users.dashboard'))
+        return redirect(url_for('users.user_dashboard'))
     return render_template('admin/admin_layout.html') 
 
 
@@ -155,41 +137,22 @@ def admin_dashboard():
 def user_dashboard():
     if current_user.is_admin:
         return redirect(url_for('users.admin_dashboard'))
+    products = Product.query.filter_by(is_deleted=False).all()
     client_token = gateway.client_token.generate()
-    return render_template('user/user_layout.html', client_token=client_token) 
+    return render_template('user/products_extends_userlayout.html', products=products, client_token=client_token) 
 
 
 @bp.route('/transactions')
 @login_required
 def show_transactions():
-    if current_user.is_admin:
-        # Admins see all transactions
-        transactions = Transaction.query.all()
-        return render_template('admin/view_all_transactions.html', transactions=transactions)  # Admin template
-    else:
-        # Regular user sees only their own transactions
-        transactions = Transaction.query.filter_by(user_id=current_user.id).all()
-        return render_template('user/user_transactions.html', transactions=transactions)
-
-@bp.route('/admin/all_users')
-@login_required
-def show_users():
-    if not current_user.is_admin:
-        abort(403)   
-    users = User.query.all()
-    return render_template('admin/view_users.html', users=users)
+    transactions = Transaction.query.filter_by(user_id=current_user.id).all()
+    return render_template('user/user_transactions.html', transactions=transactions)
 
 @bp.route('/orders')
 @login_required
 def show_orders():
-    if current_user.is_admin:
-        # Admin sees all orders
-        orders = Order.query.all()
-        return render_template('admin/view_orders.html', orders=orders)  # Admin template
-    else:
-        # Regular user sees only their own orders
-        orders = Order.query.filter_by(user_id=current_user.id).all()
-        return render_template('user/view_orders.html', orders=orders)
+    orders = Order.query.filter_by(user_id=current_user.id).all()
+    return render_template('user/view_orders.html', orders=orders)
     
 @bp.route('/add_balance', methods=['POST'])
 @login_required

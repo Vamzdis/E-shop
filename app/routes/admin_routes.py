@@ -1,6 +1,8 @@
 
 from flask import render_template, request, redirect, url_for, Blueprint, current_app, flash
 from app.models.product import Product
+from app.models.order import Order
+from app.models.transaction import Transaction
 from app.database import db
 from sqlalchemy import func
 from app.models.user import User
@@ -31,21 +33,25 @@ def add_product():
             price = float(request.form["price"])
             quantity = int(request.form["quantity"])
         except: 
-            flash("something went wrong, check input", 'danger')
+            flash("Something went wrong, check input", 'danger')
             return render_template("admin/product_list.html")        
         
-        is_available = quantity > 0
+        if quantity == 0:
+            is_available = False
+        else:
+            is_available = True
+
         is_deleted = False
         created_on = func.now()
         
         if 'picture' not in request.files:
-            flash('there is no file selected','danger')         # reloads the current page if no image is selected
+            flash('There is no file selected','danger')         # reloads the current page if no image is selected
             return redirect(request.url)
         
         picture = request.files["picture"]
  
         if picture.filename == '':
-            flash('filename is empty','danger')                  # reloads currnet page if file is not accepted
+            flash('filename is empty','danger')                  # reloads currnet page if file has no name
             return redirect(request.url)
 
         if picture and allowed_file(picture.filename):
@@ -54,11 +60,11 @@ def add_product():
             try:
                 picture.save(filepath)                  
             except:
-                flash("upload error",'danger')
+                flash("Upload error",'danger')
                 return redirect(request.url)
             
         else:
-            flash("format not allowed",'danger')
+            flash("Format not allowed",'danger')
             return redirect(request.url)
 
 
@@ -75,7 +81,7 @@ def add_product():
         
         db.session.add(product)
         db.session.commit()
-        flash("product added successfully",'success')
+        flash("Product added successfully",'success')
         return redirect(url_for("admin.list_products"))        
     else:
         return render_template("admin/add_product.html")          
@@ -98,6 +104,7 @@ def delete_product(id):
     if request.method == "POST":
         product.is_deleted = True
         db.session.commit()
+        flash(f"Product (ID: {id}) successfully deleted",'success')
         return redirect(url_for("admin.list_products"))         
     else:
         return render_template("admin/product_list.html", product=product)      
@@ -114,7 +121,7 @@ def restore_product(id):
     if request.method == "POST":
         product.is_deleted = False
         db.session.commit()
-        flash("Product restored successfully", 'success')
+        flash(f"Product (ID: {id}) successfully restored",'success')
         return redirect(url_for("admin.list_products"))         
     else:
         return render_template("admin/product_list.html", product=product)      
@@ -136,6 +143,12 @@ def edit_product(id):
             product.price = request.form["price"]
             product.quantity = request.form["quantity"]
 
+            product.quantity = int(request.form["quantity"])
+            if product.quantity == 0:
+                product.is_available = False
+            else:
+                product.is_available = True
+            
             if 'picture' in request.files and request.files["picture"].filename != '':
                 picture = request.files["picture"]
                 if allowed_file(picture.filename):
@@ -146,6 +159,7 @@ def edit_product(id):
                 else:
                     flash("upload error",'danger')
                     return redirect(request.url)
+            db.session.flush()
             db.session.commit()
             flash("Entry edited successsfully", "success")      
         except:
@@ -157,10 +171,10 @@ def edit_product(id):
 
 
 
-@admin.route("/list_users")
-def list_users():
-    users = User.query.all()                        
-    return render_template("...", users=users)    
+@admin.route('/all_users')
+def show_users(): 
+    users = User.query.all()
+    return render_template('admin/view_users.html', users=users)   
 
 
 @admin.route("/delete_user/<int:id>", methods = ["GET", "POST"])
@@ -174,7 +188,8 @@ def delete_user(id):
     if request.method == "POST":
         user.is_deleted = True
         db.session.commit()
-        return redirect(url_for("users.show_users"))             
+        flash(f"User (ID: {id}) successfully deleted",'success')
+        return redirect(url_for("admin.show_users"))             
     else:
         return render_template("admin/view_users.html", user = user)  
 
@@ -185,7 +200,7 @@ def edit_user(id):
 
     if not user:
         flash("User not found",'danger')
-        return redirect(url_for("users.show_users"))
+        return redirect(url_for("admin.show_users"))
     
     if request.method == "POST":
         try:
@@ -204,7 +219,7 @@ def edit_user(id):
         except:
             flash("something went wrong, check input", 'danger')
             return redirect(request.url) 
-        return redirect(url_for("users.show_users"))    
+        return redirect(url_for("admin.show_users"))    
     else:
         return render_template("admin/edit_user.html", user = user)
 
@@ -219,8 +234,8 @@ def restore_user(id):
     if request.method == "POST":
         user.is_deleted = False
         db.session.commit()
-        flash("User restored successfully", 'success')
-        return redirect(url_for("users.show_users"))
+        flash(f"User (ID: {id}) successfully restored",'success')
+        return redirect(url_for("admin.show_users"))
     else:
         return render_template("/admin/view_users.html")
 
@@ -236,8 +251,8 @@ def unblock_user(id):
     if request.method == "POST":
         user.is_active = True
         db.session.commit()
-        flash("User unblocked successfully", 'success')
-        return redirect(url_for("users.show_users"))         
+        flash(f"User (ID: {id}) successfully deleted",'success')
+        return redirect(url_for("admin.show_users"))         
     else:
         return render_template("admin/view_users.html", user=user)     
 
@@ -253,8 +268,18 @@ def block_user(id):
     if request.method == "POST":
         user.is_active = False
         db.session.commit()
-        return redirect(url_for("users.show_users"))             
+        flash(f"User (ID: {id}) successfully deleted",'success')
+        return redirect(url_for("admin.show_users"))             
     else:
         return render_template("admin/view_users.html", user = user)
 
+@admin.route("/all_orders")
+def show_orders():
+    orders = Order.query.all()
+    return render_template('admin/view_orders.html', orders=orders)
+
+@admin.route('/transactions')
+def show_transactions():
+    transactions = Transaction.query.all()
+    return render_template('admin/view_all_transactions.html', transactions=transactions)  # Admin template
 
