@@ -32,7 +32,7 @@ header {
     position: fixed;
     top: 0;
     width: 100%;
-    z-index: 1000;
+    z-index: 1050;
 }
 .header-logo img {
 	max-width: 150px;
@@ -215,4 +215,8 @@ i.fa-star-o {
     height: 18px;
     padding: 0;
     font-size: 11px; 
+}
+
+.cart-product-name{
+    font-size: larger;
 }

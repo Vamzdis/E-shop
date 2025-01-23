@@ -3,29 +3,66 @@
 {% block title %}Cart{% endblock %}
 
 {% block content %}
-<h1>Your Cart</h1>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Product</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Total</th>
-        </tr>
-    </thead>
+<h1>Your shopping cart</h1>
+
+{% if products %}
+<table id="productTable" class="table table-striped table-bordered">
     <tbody>
-        {% for item in cart.cart_items %}
-            <tr>
-                <td>{{ item.product.title }}</td>
-                <td>${{ item.product.price }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>${{ item.product.price * item.quantity }}</td>
-            </tr>
+        {% for product, count, _ , _ in products %}
+        <tr>
+            <td>
+                <div>
+                    <p class="cart-product-name">{{ product.name }}</p>
+                    <img src="{{ url_for('static', filename='uploads/' + product.picture) }}" alt="{{ product.name }}" width="100">
+                </div>
+            </td>
+            <td> 
+                <div class="description-container">
+                    <span class="description-full">{{ product.description }}</span>
+                </div>
+            </td>
+            <td>
+                <p>Price per item:</p>
+                {{ product.price }}
+            </td>
+            <td>
+                <p>Amount:</p>
+                {{ count }}
+                <p>Add sliders to increase/reduce amount</p>
+            </td>
+            <td>
+                <p>Rating:</p>
+                {{ product.rating }}
+            </td>
+            <td>
+                <!-- NEEDS UPDATING -->
+                <form  method="post" style="margin: 0;">
+                    <button class="btn btn-sm btn-danger" type="submit">Remove</button>
+                </form>
+                <p>Remove button needs action added</p>
+
+            </td>
+                <script>
+                    function confirmDelete() {
+                        return confirm('Confirm delete?');
+                    }
+                    function confirmRestore() {
+                        return confirm('Confirm restore?');
+                    }
+                </script>
+            </td>
+        </tr>
         {% endfor %}
     </tbody>
 </table>
-<h4>Total: ${{ total_price }}</h4>
-<form method="post" action="#">
+
+<h4>Total: ${{ price }}</h4>
+<form method="post" action="{{ url_for('users.pay_for_order', order_id=order_id) }}">
     <button type="submit" class="btn btn-success">Checkout</button>
 </form>
+
+{% else %}
+<p>The cart is currently empty</p>
+{% endif %}
+
 {% endblock %}

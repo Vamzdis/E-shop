@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_admin.html" %}
  
 {% block title %}{{product.name}}{% endblock %}
  
@@ -43,10 +43,10 @@
             </div>
             <div class="mb-3">{{ product.description }}</div>
             <div class="product-price mb-3">
-                <strong>{{ product.price }} € </strong>
+                {{ product.price }} €
             </div>
-                <a href="{{url_for('users.dashboard')}}" class="btn btn-outline-info"><i class="fas fa-chevron-left"></i> Back to Shop</a>
-                <a href="/" class="btn btn-outline-warning"></i>Rate this item</a>
+                <a href="{{url_for('admin.shop_review')}}" class="btn btn-outline-info"><i class="fas fa-chevron-left"></i> Back to Shop</a>
+                <a href="#" class="btn btn-outline-warning"></i>Rate this item</a>
         </div>  
     </div>    
 </section>
