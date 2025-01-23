@@ -6,6 +6,7 @@ from sqlalchemy import func
 from app.models.user import User
 from werkzeug.utils import secure_filename
 from config import Config
+from werkzeug.security import generate_password_hash
 import os
 
 
@@ -158,7 +159,7 @@ def edit_product(id):
 
 @admin.route("/list_users")
 def list_users():
-    users = User.query.all()
+    users = User.query.all()                        
     return render_template("...", users=users)      #add template
 
 
@@ -167,20 +168,99 @@ def delete_user(id):
     user = User.query.get(id)
 
     if not user:
-        return "User not found", 404
+        flash('User not found','danger')
+        return redirect(request.url)
     
     if request.method == "POST":
         user.is_deleted = True
         db.session.commit()
-        return redirect(url_for("..."))             #add template
+        return redirect(url_for("users.show_users"))             
     else:
-        return render_template("...", user = user)  #add template
+        return render_template("admin/view_users.html", user = user)  
+
+
+@admin.route("/edit_user/<int:id>", methods = ["GET", "POST"])
+def edit_user(id):
+    user = User.query.get(id)
+
+    if not user:
+        flash("User not found",'danger')
+        return redirect(url_for("users.show_users"))
+    
+    if request.method == "POST":
+        try:
+            user.name = request.form["name"]
+            user.last_name = request.form["last_name"]
+            user.login_email = request.form["login_email"]
+            password = request.form["password"]
+            
+            if password:
+                user.password = generate_password_hash(password)
+
+            user.is_admin = "is_admin" in request.form
+
+            db.session.commit()
+            flash("Entry edited successfully", "success")      
+        except:
+            flash("something went wrong, check input", 'danger')
+            return redirect(request.url) 
+        return redirect(url_for("users.show_users"))    #add url
+    else:
+        return render_template("admin/edit_user.html", user = user)
+
+@admin.route("/restore_user/<int:id>", methods = ["GET", "POST"])
+def restore_user(id):
+    user = User.query.get(id)
+
+    if not user:
+        flash("User not found", 'danger')
+        return redirect(request.url)
+    
+    if request.method == "POST":
+        user.is_deleted = False
+        db.session.commit()
+        flash("User restored successfully", 'success')
+        return redirect(url_for("users.show_users"))
+    else:
+        return render_template("/admin/view_users.html")
+
+
+@admin.route("/unblock_user/<int:id>", methods = ["GET", "POST"])
+def unblock_user(id):
+    user = User.query.get(id)
+
+    if not user:
+        flash('User not found','danger')
+        return redirect(request.url)
+
+    if request.method == "POST":
+        user.is_active = True
+        db.session.commit()
+        flash("User unblocked successfully", 'success')
+        return redirect(url_for("users.show_users"))         #add template
+    else:
+        return render_template("admin/view_users.html", user=user)      #add template
+
+
+@admin.route("/block_user/<int:id>", methods = ["GET", "POST"])
+def block_user(id):
+    user = User.query.get(id)
+
+    if not user:
+        flash('User not found','danger')
+        return redirect(request.url)
+    
+    if request.method == "POST":
+        user.is_active = False
+        db.session.commit()
+        return redirect(url_for("users.show_users"))             
+    else:
+        return render_template("admin/view_users.html", user = user)
+
     
 
 # Administratoriaus galimybės
 
-
-# Papildyti esamų prekių kiekį
 
 # Peržiūrėti statistika apie prekes. Kiek prekių nupirkta kurią dieną, už kiek nupirkta,
 # kurie mėnesiai pelningiausi, kurios prekės geriausiai įvertintos
