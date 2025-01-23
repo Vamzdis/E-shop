@@ -36,7 +36,11 @@ def add_product():
             flash("Something went wrong, check input", 'danger')
             return render_template("admin/product_list.html")        
         
-        is_available = quantity > 0
+        if quantity == 0:
+            is_available = False
+        else:
+            is_available = True
+
         is_deleted = False
         created_on = func.now()
         
@@ -47,7 +51,7 @@ def add_product():
         picture = request.files["picture"]
  
         if picture.filename == '':
-            flash('Filename is empty','danger')                  # reloads currnet page if file is not accepted
+            flash('filename is empty','danger')                  # reloads currnet page if file has no name
             return redirect(request.url)
 
         if picture and allowed_file(picture.filename):
@@ -139,6 +143,12 @@ def edit_product(id):
             product.price = request.form["price"]
             product.quantity = request.form["quantity"]
 
+            product.quantity = int(request.form["quantity"])
+            if product.quantity == 0:
+                product.is_available = False
+            else:
+                product.is_available = True
+            
             if 'picture' in request.files and request.files["picture"].filename != '':
                 picture = request.files["picture"]
                 if allowed_file(picture.filename):
@@ -149,6 +159,7 @@ def edit_product(id):
                 else:
                     flash("upload error",'danger')
                     return redirect(request.url)
+            db.session.flush()
             db.session.commit()
             flash("Entry edited successsfully", "success")      
         except:
