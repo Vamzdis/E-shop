@@ -15,7 +15,11 @@
                         <h5 class="card-title">{{ product.name }}</h5>
 
                         <p class="card-text text-muted">Price: ${{ product.price }}</p>
-
+                        
+                        {% if current_user.is_admin %}
+                        <p class="card-text text-muted">Stock: {{ product.quantity }}</p>
+                        {% endif %}
+                        
                     <!-- UPDATE THIS! When we will have proper rating-->
                     <div class="product-rating mb-2">
                         {% if product.rating %}
