@@ -78,6 +78,12 @@ tr:hover {
     justify-content: center;
 }
 
+.product-btns {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+}
 footer {
     background: linear-gradient(180deg, rgba(62,176,202,1) 0%, rgba(0,153,185,1) 50%, rgba(0,124,132,1) 100%);
     color: white;
