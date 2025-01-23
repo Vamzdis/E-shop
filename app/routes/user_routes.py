@@ -145,7 +145,6 @@ def dashboard():
     products = Product.query.filter_by(is_deleted=False).all()
     client_token = gateway.client_token.generate()   
     return render_template('user/products_extends_userlayout.html', products=products, client_token=client_token)    
-    # return redirect(url_for('users.user_dashboard'))
     
 @bp.route('/transactions')
 @login_required
@@ -168,13 +167,13 @@ def add_balance():
 
         if not amount or not nonce:
             flash("Invalid input. Please try again.", "danger")
-            return redirect(url_for('users.user_dashboard'))
+            return redirect(url_for('users.dashboard'))
 
         amount = float(amount)
 
         if amount <= 0:
             flash("Amount must be greater than 0.", "danger")
-            return redirect(url_for('users.user_dashboard'))
+            return redirect(url_for('users.dashboard'))
         
         result = gateway.transaction.sale({
             "amount": f"{amount:.2f}",
@@ -206,7 +205,7 @@ def add_balance():
         print(f"Error during add_balance: {e}")
         flash("An error occurred. Please try again later.", "danger")
 
-    return redirect(url_for('users.user_dashboard'))
+    return redirect(url_for('users.dashboard'))
 
 
 @bp.route('/cash_out', methods=['POST'])
@@ -217,18 +216,18 @@ def cash_out():
 
         if not amount:
             flash("Invalid input. Please try again.", "danger")
-            return redirect(url_for('users.user_dashboard'))
+            return redirect(url_for('users.dashboard'))
 
         amount = float(amount)
 
         if amount <= 0:
             flash("Amount must be greater than 0.", "danger")
-            return redirect(url_for('users.user_dashboard'))
+            return redirect(url_for('users.dashboard'))
 
         # Check if user has sufficient balance
         if current_user.balance < amount:
             flash("Insufficient balance to complete the cash out.", "danger")
-            return redirect(url_for('users.user_dashboard'))
+            return redirect(url_for('users.dashboard'))
 
         # Deduct amount from user's balance
         current_user.balance -= amount
@@ -244,7 +243,7 @@ def cash_out():
         print(f"Error during cash_out: {e}")
         flash("An error occurred. Please try again later.", "danger")
 
-    return redirect(url_for('users.user_dashboard'))
+    return redirect(url_for('users.dashboard'))
 
 @bp.route('/order_payment', methods=['POST'])
 @login_required
@@ -261,7 +260,7 @@ def pay_for_order():
         price = order.purchase_price
         if current_user.balance < price:
             flash("Insufficient funds. Please add to your balance.", "danger")
-            return redirect(url_for('users.user_dashboard'))
+            return redirect(url_for('users.dashboard'))
 
         # Deduct the price from the user's balance
         current_user.balance -= price
@@ -275,5 +274,5 @@ def pay_for_order():
         print(f"Error during payment: {e}")
         flash("An error occurred. Please try again later.", "danger")
 
-    return redirect(url_for('users.user_dashboard'))
+    return redirect(url_for('users.dashboard'))
 
