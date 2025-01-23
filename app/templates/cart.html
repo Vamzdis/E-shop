@@ -4,7 +4,69 @@
 
 {% block content %}
 <h1>Your Cart</h1>
-<table class="table">
+<table id="productTable" class="table table-striped table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Image</th>
+            <th>Stock</th>
+            <th>Rating</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in products %}
+        <tr>
+            <td>{{loop.index}}</td>
+            <td>{{ product.name }}</td>
+            <td> <div class="description-container">
+                <span class="description-short">{{ product.description[:30]}}...</span>
+                <span class="description-full" style="display: none;">{{ product.description }}</span>
+                <span class="read-more-btn text-primary" onclick="toggleDescription(this)" style="cursor: pointer;">Read More</span>
+            </div></td>
+            <td>{{ product.price }}</td>
+            <td><img src="{{ url_for('static', filename='uploads/' + product.picture) }}" alt="{{ product.name }}" width="100"></td>
+            <td>{{ product.quantity }}</td>
+            <td>{{ product.rating }}</td>
+            <td>
+                {% if product.is_deleted %}
+                <span class="badge badge-danger">Deleted</span>
+                {% elif product.is_available %}
+                <span class="badge badge-success">Available</span>
+                {% else %}
+                <span class="badge badge-secondary">Out of stock</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if product.is_deleted == False %}
+                <a href="{{ url_for('admin.edit_product', id=product.id) }}" class="btn btn-sm btn-warning" style="margin-right: 5px;">Edit</a>
+                <form action="{{ url_for('admin.delete_product', id=product.id) }}" method="post" onsubmit="return confirmDelete()" style="margin: 0;">
+                    <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                </form>
+                {% endif %}
+                {% if product.is_deleted == True %}
+                <form action="{{ url_for('admin.restore_product', id=product.id) }}" method="post" onsubmit="return confirmRestore()" style="margin: 0;">
+                    <button class="btn btn-sm btn-secondary" type="submit">Restore</button>
+                </form>
+                {% endif %}
+            </td>
+                <script>
+                    function confirmDelete() {
+                        return confirm('Confirm delete?');
+                    }
+                    function confirmRestore() {
+                        return confirm('Confirm restore?');
+                    }
+                </script>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<!-- <table class="table">
     <thead>
         <tr>
             <th>Product</th>
@@ -23,9 +85,9 @@
             </tr>
         {% endfor %}
     </tbody>
-</table>
+</table> -->
 <h4>Total: ${{ total_price }}</h4>
-<form method="post" action="#">
+<form method="post" action="{{ url_for('cart.checkout', id=cart.id) }}">
     <button type="submit" class="btn btn-success">Checkout</button>
 </form>
 {% endblock %}
