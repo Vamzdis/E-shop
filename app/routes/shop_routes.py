@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for
+from flask_login import current_user
+from app.models.user import User
 # from flask import request, redirect, url_for #very likely will need these in the nearby future
 
 from app.database import db
@@ -17,4 +19,7 @@ def show():
 @bp.route("/product/<int:id>")
 def view_product(id):
     product = Product.query.get(id)
-    return render_template("user/view_product.html", product = product)
+    if current_user.is_admin:
+        return render_template("view_product_admin.html", product = product)
+    else:
+        return render_template("user/view_product.html", product = product)
