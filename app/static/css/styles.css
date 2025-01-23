@@ -39,6 +39,7 @@ header {
 }
 .header-logo {
 	float: left;
+    margin-right: 100px;
 }
 .nav-bar {
     display: flex;
@@ -196,4 +197,23 @@ i.fa-star, i.fa-star-half-o {
 }
 i.fa-star-o {
     color: #c9c9c9;
+}
+
+.balance-container {
+    display: inline-flex;         
+    align-items: center;          
+    gap: 5px;                    
+}
+
+.balance-container strong {
+    font-size: 1rem;              
+    margin: 0;
+}
+
+.balance-container button {
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    font-size: 11px;
+    color: 
 }
