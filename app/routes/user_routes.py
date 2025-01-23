@@ -109,7 +109,7 @@ def login():
             
             login_user(user)  # user login using flask-login built in function
             flash("You have successfully logged in!", "success")
-            return redirect(url_for('users.user_dashboard'))
+            return redirect(url_for('users.dashboard'))
         else:
             flash("Invalid email or password", "danger")
             return render_template('user/user_login_extends_base.html', form = form)
@@ -124,24 +124,16 @@ def logout():
     flash("You have successfully logged out!", "success")
     return redirect(url_for('users.login'))
 
-@bp.route('/admin_dashboard')
+@bp.route('/dashboard')
 @login_required
-def admin_dashboard():
-    if not current_user.is_admin:
-        return redirect(url_for('users.user_dashboard'))
-    return render_template('admin/admin_layout.html') 
-
-
-@bp.route('/user_dashboard')
-@login_required
-def user_dashboard():
+def dashboard():
     if current_user.is_admin:
-        return redirect(url_for('users.admin_dashboard'))
+        return redirect(url_for('admin.index'))
     products = Product.query.filter_by(is_deleted=False).all()
-    client_token = gateway.client_token.generate()
-    return render_template('user/products_extends_userlayout.html', products=products, client_token=client_token) 
-
-
+    client_token = gateway.client_token.generate()   
+    return render_template('user/products_extends_userlayout.html', products=products, client_token=client_token)    
+    # return redirect(url_for('users.user_dashboard'))
+    
 @bp.route('/transactions')
 @login_required
 def show_transactions():
