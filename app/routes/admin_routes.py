@@ -268,7 +268,7 @@ def unblock_user(id):
     if request.method == "POST":
         user.is_active = True
         db.session.commit()
-        flash(f"User (ID: {id}) successfully deleted",'success')
+        flash(f"User (ID: {id}) successfully unblocked",'success')
         return redirect(url_for("admin.show_users"))         
     else:
         return render_template("admin/view_users.html", user=user)     
@@ -286,7 +286,7 @@ def block_user(id):
     if request.method == "POST":
         user.is_active = False
         db.session.commit()
-        flash(f"User (ID: {id}) successfully deleted",'success')
+        flash(f"User (ID: {id}) successfully blocked",'success')
         return redirect(url_for("admin.show_users"))             
     else:
         return render_template("admin/view_users.html", user = user)
