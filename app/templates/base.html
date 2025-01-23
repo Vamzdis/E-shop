@@ -18,6 +18,7 @@
 <body>
 
 <header>
+
     <div class="container nav-bar">
         <div class="header-logo">
             <a href="{{ url_for('shop.show') }}" title="">
@@ -25,7 +26,7 @@
             </a>
         </div>
         <nav class="nav">
-            <a class="nav-link" href="{{ url_for('admin.index') }}"><i class="fa-solid fa-cart-shopping"></i> My Cart</a>
+            <a class="nav-link" href="{{ url_for('cart.view_cart') }}"><i class="fa-solid fa-cart-shopping"></i> My Cart</a>
             <a class="nav-link" href="{{ url_for('admin.index') }}"><i class="fa-solid fa-gauge-high"></i> Admin</a>
             <a class="nav-link" href="{{ url_for('users.login') }}"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
         </nav>
