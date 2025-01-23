@@ -46,45 +46,32 @@ def add_to_cart(product_id):
 
     user_id = current_user.id
     product = Product.query.get(product_id)
+
     if not product or product.quantity <= 0:
         flash('Product is out of stock.', 'danger')
         return redirect(url_for('products'))
 
     cart = ProductCart.query.filter_by(user_id=user_id).first()
-    if not cart:
-        cart = ProductCart(user_id=user_id)
-        db.session.add(cart)
-        db.session.commit()
 
-    cart_item = CartItem.query.filter_by(products_cart=cart.id, product_id=product_id).first()
+    if not cart:
+        cart = ProductCart(user_id=user_id) #it not, then create a new cart
+        db.session.add(cart)
+
+        cart_item = CartItem(products_cart_id=cart.id, product_id=product_id, quantity=1)
+        db.session.add(cart_item)
+
+    cart_item = CartItem.query.filter_by(products_cart_id=cart.id, product_id=product_id).first()
     if cart_item:
         cart_item.quantity += 1
     else:
         cart_item = CartItem(products_cart=cart.id, product_id=product_id, quantity=1)
         db.session.add(cart_item)
 
-    product.quantity -= 1
     db.session.commit()
 
     flash('Product added to cart.', 'success')
     return redirect(url_for('products'))
 
-
-#pretty sure this is redundant now
-# @bp.route('/cart/checkout', methods=['POST'])
-# @login_required
-# def checkout():
-
-#     user_id = current_user.id
-#     cart = ProductCart.query.filter_by(user_id=user_id).first()
-
-#     if not cart or not cart.cart_items:
-#         flash('Your cart is empty.', 'info')
-#         return redirect(url_for('products'))
-    
-#     # purchase handling goes here
-
-#     return render_template('cart.html', cart=cart)
 
 @bp.route('/remove_item/<int:id>', methods = ['GET','POST'])
 @login_required
