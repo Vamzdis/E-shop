@@ -25,6 +25,11 @@ def allowed_file(filename):
 def index():
     return render_template('admin/index.html')
 
+@admin.route('/shop')
+@login_required
+def shop_review():
+    products = Product.query.all()
+    return render_template('products_extends_base_admin.html', products=products)
 
 @admin.route("/add_product", methods = ["GET", "POST"])
 @login_required
