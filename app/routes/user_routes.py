@@ -114,7 +114,7 @@ def login():
                 login_user(user)  
                 flash("You have successfully logged in!", "success")
                 db.session.commit()
-                return redirect(url_for('users.dashboard'))
+                return redirect(url_for('shop.show'))
             else:
                 user.failed_login_count += 1
                 if user.failed_login_count >= 3:
@@ -145,7 +145,7 @@ def dashboard():
         return redirect(url_for('admin.index'))
     products = Product.query.filter_by(is_deleted=False).all()
     client_token = gateway.client_token.generate()   
-    return render_template('user/products_extends_userlayout.html', products=products, client_token=client_token)    
+    return render_template('products_extends_base.html', products=products, client_token=client_token)    
     
 @bp.route('/transactions')
 @login_required

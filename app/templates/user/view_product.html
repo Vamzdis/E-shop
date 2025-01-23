@@ -45,9 +45,34 @@
             <div class="product-price mb-3">
                 <strong>{{ product.price }} € </strong>
             </div>
-                <a href="{{url_for('users.dashboard')}}" class="btn btn-outline-info"><i class="fas fa-chevron-left"></i> Back to Shop</a>
+                <a href="/" class="btn btn-outline-info"><i class="fas fa-chevron-left"></i> Back to Shop</a>
                 <a href="/" class="btn btn-outline-warning"></i>Rate this item</a>
         </div>  
     </div>    
+    <div class="product-reviews mt-4">
+        <h3>Customer Reviews ({{ total_ratings }})</h3>
+        <p>Average Rating: {{ "%.1f"|format(average_rating) }}</p>
+        <p>Total Reviews: {{ total_ratings }}</p>
+        {% if total_ratings > 0 %}
+        <ul class="list-group">
+            {% for rating, user_name in ratings %}
+                <li class="list-group-item">
+                    <strong>{{ user_name }}</strong> 
+                    <span class="text-muted">rated {{ rating.rating }}/5</span> <br>
+                    {% for _ in range(rating.rating|int) %}
+                        <i class="fa fa-star text-warning"></i>
+                    {% endfor %}
+                    {% if rating.rating % 1 != 0 %}
+                        <i class="fa fa-star-half-o text-warning"></i>
+                    {% endif %}
+                    <br>
+                    <small>Rated on: {{ rating.created_on.strftime('%Y-%m-%d') }}</small>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No reviews yet. Be the first to review!</p>
+    {% endif %}
+    </div>
 </section>
 {% endblock %}
