@@ -1,5 +1,4 @@
 from app.database import db
-from datetime import datetime
 from sqlalchemy import func
 
 class Order(db.Model):
