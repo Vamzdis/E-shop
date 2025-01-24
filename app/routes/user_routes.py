@@ -115,7 +115,15 @@ def login():
                 login_user(user)  
                 flash("You have successfully logged in!", "success")
                 db.session.commit()
-                return redirect(url_for('shop.show'))
+
+                #handling rerouting here
+                next_page = request.args.get('next')
+
+                if next_page:
+                    return redirect(next_page)
+                else:
+                    return redirect(url_for('shop.show'))
+                
             else:
                 user.failed_login_count += 1
                 if user.failed_login_count >= 3:
@@ -128,7 +136,8 @@ def login():
         else:
             flash("Invalid email or password", "danger")
             return render_template('user/user_login_extends_base.html', form = form)
-        
+            
+
     return render_template('user/user_login_extends_base.html', form = form)
 
 
