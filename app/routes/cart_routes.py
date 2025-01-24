@@ -35,7 +35,6 @@ def view_cart():
 @bp.route('/add_to_cart/<int:product_id>', methods=['POST'])
 @login_required
 def add_to_cart(product_id):
-
     if not current_user.is_authenticated:
         flash("You need to log in to add items to your cart.", "warning")
         return redirect(url_for('auth.login', next=url_for('cart.add_to_cart', product_id=product_id)))
@@ -46,45 +45,51 @@ def add_to_cart(product_id):
     if not product or product.quantity <= 0:
         flash('Product is out of stock.', 'danger')
         return redirect(request.referrer)
-        # return redirect(url_for('product.products'))
 
     cart = ProductCart.query.filter_by(user_id=user_id).first()
-
     if not cart:
-        cart = ProductCart(user_id=user_id) #it not, then create a new cart
+        cart = ProductCart(user_id=user_id)
         db.session.add(cart)
-
-        cart_item = CartItem(products_cart_id=cart.id, product_id=product_id, quantity=1)
-        db.session.add(cart_item)
+        db.session.commit()
 
     cart_item = CartItem.query.filter_by(products_cart_id=cart.id, product_id=product_id).first()
-
     if cart_item:
+        if cart_item.quantity + 1 > product.quantity:
+            flash(f"Only {product.quantity} units available in stock.", "danger")
+            return redirect(request.referrer)
+
         cart_item.quantity += 1
     else:
+
+        if product.quantity < 1:
+            flash("No units available in stock.", "danger")
+            return redirect(request.referrer)
+
         cart_item = CartItem(products_cart_id=cart.id, product_id=product_id, quantity=1)
         db.session.add(cart_item)
 
     db.session.commit()
-
     flash('Product added to cart.', 'success')
     return redirect(request.referrer)
 
-@bp.route('/remove_item/<int:id>', methods = ['POST'])
+@bp.route('/remove_item/<int:id>', methods=['POST'])
 @login_required
 def remove_cart_item(id):
-    print("id from button: ", id)
-    cart_item = CartItem.query.filter_by(product_id=id).first()
- 
-    if not cart_item:
-        flash('No such item in the cart','danger')
-        return redirect(request.referrer)
    
-    if request.method == "POST":
-        db.session.delete(cart_item)
-        db.session.commit()
+    user_cart = ProductCart.query.filter_by(user_id=current_user.id).first()
 
-        flash(f"Item successfully deleted from the cart",'success')
-        return redirect(url_for('cart.view_cart'))          
-    else:
-        return render_template("cart_extends_base.html", cart_item = cart_item)
+    if not user_cart:
+        flash('No cart found for the current user.', 'danger')
+        return redirect(url_for('cart.view_cart'))
+
+    cart_item = CartItem.query.filter_by(product_id=id, products_cart_id=user_cart.id).first()
+
+    if not cart_item:
+        flash('No such item in your cart.', 'danger')
+        return redirect(request.referrer)
+
+    db.session.delete(cart_item)
+    db.session.commit()
+
+    flash('Item successfully deleted from the cart.', 'success')
+    return redirect(url_for('cart.view_cart'))
