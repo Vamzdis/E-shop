@@ -70,21 +70,38 @@ def add_to_cart(product_id):
     flash('Product added to cart.', 'success')
     return redirect(request.referrer)
 
-
-@bp.route('/remove_item/<int:id>', methods = ['GET','POST'])
+@bp.route('/remove_item/<int:id>', methods = ['Get', 'POST'])
 @login_required
 def remove_cart_item(id):
     cart_item = CartItem.query.get(id)
-
+ 
     if not cart_item:
         flash('No such item in the cart','danger')
-        return redirect(request.url)
-    
+        return redirect(request.referrer)
+   
     if request.method == "POST":
         db.session.delete(cart_item)
         db.session.commit()
-
         flash(f"Item successfully deleted from the cart",'success')
-        return redirect(request.referrer)             
+        return redirect(request.referrer)            
     else:
-        return render_template("cart_extends_base.html", cart_item = cart_item) 
+        return render_template("cart_extends_base.html", cart_item = cart_item)
+
+
+# @bp.route('/remove_item/<int:id>', methods = ['GET','POST'])
+# @login_required
+# def remove_cart_item(id):
+#     cart_item = CartItem.query.get(id)
+
+#     if not cart_item:
+#         flash('No such item in the cart','danger')
+#         return redirect(request.url)
+    
+#     if request.method == "POST":
+#         db.session.delete(cart_item)
+#         db.session.commit()
+
+#         flash(f"Item successfully deleted from the cart",'success')
+#         return redirect(request.referrer)             
+#     else:
+#         return render_template("cart_extends_base.html", cart_item = cart_item) 
