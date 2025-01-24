@@ -10,9 +10,3 @@ class ProductCart(db.Model):
 
     user = db.relationship('User', back_populates='products_carts')
     cart_items = db.relationship('CartItem', back_populates='products_carts', cascade="all, delete")
-
-
-    def __repr__(self):
-        pass
-
-

@@ -23,7 +23,3 @@ class User(db.Model, UserMixin):
     products_carts = db.relationship("ProductCart", back_populates="user", cascade = "all,delete")
     orders = db.relationship("Order", back_populates="user", cascade = "all,delete")
     ratings = db.relationship("Rating", back_populates="user", cascade = "all,delete")
-        
-    def __repr__(self):
-        return f"{self.name} id ({self.id})"
-    

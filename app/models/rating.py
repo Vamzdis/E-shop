@@ -12,8 +12,3 @@ class Rating(db.Model):
 
     product = db.relationship("Product", back_populates="ratings")
     user = db.relationship("User", back_populates="ratings")
-
-    def __repr__(self):
-        pass
-
-                           
