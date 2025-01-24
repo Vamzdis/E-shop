@@ -13,13 +13,9 @@ class Transaction(db.Model):
 
     user = db.relationship("User", back_populates="transactions")
 
-    def __init__(self, user_id, sum, status:str, type, created_on:datetime=None):
+    def __init__(self, user_id : int, sum, status:str, type, created_on:datetime=None):
         self.user_id = user_id
         self.sum = sum
         self.status = status
         self.type = type
         self.created_on = created_on
-
-    def __repr__(self):
-        pass
-    
