@@ -43,7 +43,7 @@
                     
                     <div class="product-actions">
                         <div id="add-to-cart-btn-container">
-                            {%if not current_user.is_admin %}
+                            {%if current_user.is_authenticated and not current_user.is_admin %}
                             <form action="{{ url_for('cart.add_to_cart', product_id=product.id) }}" method="post" style="display: inline;">
                                 <button type="submit" class="btn btn-success">Add to cart</button>
                             </form>
