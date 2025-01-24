@@ -10,7 +10,7 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable = False)
     picture = db.Column(db.String(255), nullable = False)
     quantity = db.Column(db.Integer, nullable = False)
-    rating = db.Column(db.Integer, nullable = True)
+    rating = db.Column(db.Integer, default = 0, nullable = True)
     is_available = db.Column(db.Boolean, default = True, nullable = False)
     is_deleted = db.Column(db.Boolean, default = False, nullable = False)
     created_on = db.Column(db.DateTime, default = func.now())
@@ -19,7 +19,7 @@ class Product(db.Model):
     order_items = db.relationship("OrderItem", back_populates="product")
     ratings = db.relationship("Rating",back_populates="product")
 
-    def __init__(self, name:str, description:str, price:float, picture :str, quantity:int, rating:float, 
+    def __init__(self, name:str, description:str, price:float, picture :str, quantity:int, 
                  is_available = None, is_deleted = None, created_on =None):
 
         self.name = name
@@ -29,7 +29,6 @@ class Product(db.Model):
         self.quantity = quantity
         self.is_available = is_available
         self.is_deleted = is_deleted
-        self.rating = rating
         self.created_on = created_on
 
     def __repr__(self):
