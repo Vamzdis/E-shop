@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, jsonify, render_template, request, redirect, url_for, flash
 from app.models.product_cart import ProductCart
 from app.models.product import Product
 
@@ -17,13 +17,9 @@ def view_cart():
     user_id = current_user.id
 
     #oh boy this needs explaination
-    #we're selecting products, their ordered quantities here and the id of this order
     cart_products = db.session.query(Product, CartItem.quantity, ProductCart.id, (Product.price * CartItem.quantity).label('total_price')                        
-#the above selection is made from order items where the product item is joined with cart item by id below
-).join( CartItem, Product.id == CartItem.product_id 
-#that selection is made from cartitems where order id matches       
+).join( CartItem, Product.id == CartItem.product_id       
 ).join( ProductCart, CartItem.products_cart_id == ProductCart.id 
-#lastly, we only select products that are matching the given user id which is listed in the orders table
 ).filter( ProductCart.user_id == user_id).all()
     
 
@@ -33,7 +29,7 @@ def view_cart():
     else:
         cart_id = cart_products[0][2]
         total_price = sum(product.total_price for product in cart_products)
-    return render_template('cart.html', products=cart_products, cart_id=cart_id, total_price=total_price)
+    return render_template('cart_extends_base.html', products=cart_products, cart_id=cart_id, total_price=total_price)
 
 
 @bp.route('/add_to_cart/<int:product_id>', methods=['POST'])
@@ -49,7 +45,8 @@ def add_to_cart(product_id):
 
     if not product or product.quantity <= 0:
         flash('Product is out of stock.', 'danger')
-        return redirect(url_for('product.products'))
+        return redirect(request.referrer)
+        # return redirect(url_for('product.products'))
 
     cart = ProductCart.query.filter_by(user_id=user_id).first()
 
@@ -70,7 +67,7 @@ def add_to_cart(product_id):
     db.session.commit()
 
     flash('Product added to cart.', 'success')
-    return redirect(url_for('product.products'))
+    return redirect(request.referrer)
 
 
 @bp.route('/remove_item/<int:id>', methods = ['GET','POST'])
@@ -85,7 +82,8 @@ def remove_cart_item(id):
     if request.method == "POST":
         db.session.delete(cart_item)
         db.session.commit()
+
         flash(f"Item successfully deleted from the cart",'success')
-        return redirect(url_for("cart.view_cart"))             
+        return redirect(request.referrer)             
     else:
-        return render_template("cart.html", cart_item = cart_item) 
+        return render_template("cart_extends_base.html", cart_item = cart_item) 
