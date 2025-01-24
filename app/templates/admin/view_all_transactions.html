@@ -46,7 +46,7 @@
                         <span class="badge badge-dark"> Deposit </span>
                         {% elif transaction.type == 'Cash out' %}
                         <span class="badge badge-info"> Cash out </span>
-                        {% elif transaction.status == 'Order payment' %}
+                        {% elif transaction.type == 'Order payment' %}
                         <span class="badge badge-primary"> Order payment </span>
                         {% else %}
                         <span class="badge badge-secondary"> Unknown</span>
