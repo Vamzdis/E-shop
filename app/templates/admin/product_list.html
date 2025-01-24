@@ -33,7 +33,7 @@
                 <td>{{ product.price }}</td>
                 <td><img src="{{ url_for('static', filename='uploads/' + product.picture) }}" alt="{{ product.name }}" width="100"></td>
                 <td>{{ product.quantity }}</td>
-                <td>{{ product.rating }}</td>
+                <td>{{ product.average_rating | round(1) }}<small>({{ product.total_ratings }})</small></td>
                 <td>
                     {% if product.is_deleted %}
                     <span class="badge badge-danger">Deleted</span>
@@ -44,7 +44,7 @@
                     {% endif %}
                 </td>
                 <td>{{ product.created_on }}</td>
-                <td>
+                <td class="table-btns">
                     {% if product.is_deleted == False %}
                     <div class="product-btns">
                         <a href="{{ url_for('admin.edit_product', id=product.id) }}" class="btn btn-sm btn-warning" style="margin-right: 5px;">Edit</a>
