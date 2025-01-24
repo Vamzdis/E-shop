@@ -58,6 +58,7 @@ def add_to_cart(product_id):
         db.session.add(cart_item)
 
     cart_item = CartItem.query.filter_by(products_cart_id=cart.id, product_id=product_id).first()
+
     if cart_item:
         cart_item.quantity += 1
     else:
