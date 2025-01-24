@@ -5,7 +5,6 @@
 {% block content %}
 <h2>All Orders</h2>
 
-{% if orders %}
 <div class="table-responsive">
     <table id="ordersTable" class="table table-striped table-bordered">
     <thead class="thead-dark">
@@ -47,8 +46,5 @@
         });
     });
 </script>
-{% else %}
-    <p>No orders found.</p>
-{% endif %}
 
 {% endblock %}
