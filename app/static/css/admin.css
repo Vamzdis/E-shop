@@ -89,5 +89,13 @@ footer {
     color: white;
     text-align: center;
     padding: 15px 0;
-    margin-top: 45px;
+}
+
+.custom-bg main{
+    background-image: url('/static/images/admin.jpeg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    min-height: 100vh;
+    margin: 0;
 }

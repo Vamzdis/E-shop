@@ -19,7 +19,7 @@
  
     <title>{% block title %}FTWT Shop{% endblock %}</title>
 </head>
-<body>
+<body class="{{ body_class|default('') }}"> 
     <header>
         <div class="container nav-bar">
                 <a class="nav-link" href="{{ url_for('admin.index') }}" >
