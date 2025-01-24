@@ -228,3 +228,40 @@ i.fa-star-o {
 .cart-product-name{
     font-size: larger;
 }
+
+.card-title {
+    height: 50px;
+}
+
+.modal .rating-stars {
+    font-size: 30px;
+    color: #ddd;
+    cursor: pointer;
+}
+
+.modal .rating-stars input[type="radio"] {
+    display: none;
+}
+
+.modal .rating-stars .fa-star {
+    color: #ddd;
+    transition: color 0.3s;
+}
+
+.modal .rating-stars .fa-star.checked {
+    color: #ffcc00; 
+}
+.model .rating-stars label i {
+    cursor: pointer;
+    transition: color 0.3s ease-in-out;
+}
+
+.modal .rating-stars label i.checked {
+    color: #ffcc00;
+}
+.button-group {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
