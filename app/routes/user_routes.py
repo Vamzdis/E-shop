@@ -263,7 +263,7 @@ def cash_out():
 @bp.route('/order_payment/<int:cart_id>', methods=['POST'])
 @login_required
 def pay_for_order(cart_id):
-    # try:
+    try:
         cart = ProductCart.query.get(cart_id)
 
         if not cart:
@@ -303,9 +303,9 @@ def pay_for_order(cart_id):
     
         flash(f"Successfully paid {total_price}€ for your order!", "success")
    
-    # except Exception as e:
-    #     print(f"Error during payment: {e}")
-    #     flash("An error occurred. Please try again later.", "danger")
+    except Exception as e:
+        print(f"Error during payment: {e}")
+        flash("An error occurred. Please try again later.", "danger")
 
         return redirect(url_for('shop.show'))
 
