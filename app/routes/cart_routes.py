@@ -49,7 +49,7 @@ def add_to_cart(product_id):
 
     if not product or product.quantity <= 0:
         flash('Product is out of stock.', 'danger')
-        return redirect(url_for('products'))
+        return redirect(url_for('product.products'))
 
     cart = ProductCart.query.filter_by(user_id=user_id).first()
 
@@ -64,13 +64,13 @@ def add_to_cart(product_id):
     if cart_item:
         cart_item.quantity += 1
     else:
-        cart_item = CartItem(products_cart=cart.id, product_id=product_id, quantity=1)
+        cart_item = CartItem(products_cart_id=cart.id, product_id=product_id, quantity=1)
         db.session.add(cart_item)
 
     db.session.commit()
 
     flash('Product added to cart.', 'success')
-    return redirect(url_for('products'))
+    return redirect(url_for('product.products'))
 
 
 @bp.route('/remove_item/<int:id>', methods = ['GET','POST'])
