@@ -16,17 +16,19 @@
                         <label>Product Qty </label>
                         <input type="number" class="form-control" id="quantity" name="quantity" step="0.01" value="{{product.quantity}}">
                     </div>
-                    <div>
-                        <label>Product Image </label><br>
-                        <img src="{{ url_for('static', filename='uploads/' + product.picture) }}" alt="Current Product Image" width="150">
-                        <input type="file" class="form-control-file mt-2" id="picture" name="picture">
-                    </div>
                     <div class="form-group col-md-6 mb-6">
                         <label>Product Description </label>
                         <textarea type="text" class="form-control" id="description" name="description" rows="3">{{product.description}}</textarea>
                     </div>
                     <div class="form-group col-md-6 mb-6">
+                        <label>Product Image </label><br>
+                        <img src="{{ url_for('static', filename='uploads/' + product.picture) }}" alt="Current Product Image" width="150">{{product.picture}}
+                        <input type="file" class="form-control-file mt-2" id="picture" name="picture">
+                    </div>
+                    
+                    <div class="form-group col-md-6 mb-6">
                         <button class="btn btn-primary" type="submit">Submit changes</button>
+                        <a href="{{ url_for('admin.list_products')}}" class="btn btn-danger">Cancel</a>
                     </div>
                 </div>
             </form>
