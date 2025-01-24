@@ -17,13 +17,9 @@ def view_cart():
     user_id = current_user.id
 
     #oh boy this needs explaination
-    #we're selecting products, their ordered quantities here and the id of this order
     cart_products = db.session.query(Product, CartItem.quantity, ProductCart.id, (Product.price * CartItem.quantity).label('total_price')                        
-#the above selection is made from order items where the product item is joined with cart item by id below
-).join( CartItem, Product.id == CartItem.product_id 
-#that selection is made from cartitems where order id matches       
+).join( CartItem, Product.id == CartItem.product_id       
 ).join( ProductCart, CartItem.products_cart_id == ProductCart.id 
-#lastly, we only select products that are matching the given user id which is listed in the orders table
 ).filter( ProductCart.user_id == user_id).all()
     
 
@@ -33,7 +29,7 @@ def view_cart():
     else:
         cart_id = cart_products[0][2]
         total_price = sum(product.total_price for product in cart_products)
-    return render_template('cart.html', products=cart_products, cart_id=cart_id, total_price=total_price)
+    return render_template('cart_extends_base.html', products=cart_products, cart_id=cart_id, total_price=total_price)
 
 
 @bp.route('/add_to_cart/<int:product_id>', methods=['POST'])
@@ -46,45 +42,34 @@ def add_to_cart(product_id):
 
     user_id = current_user.id
     product = Product.query.get(product_id)
+
     if not product or product.quantity <= 0:
         flash('Product is out of stock.', 'danger')
-        return redirect(url_for('products'))
+        return redirect(request.referrer)
+        # return redirect(url_for('product.products'))
 
     cart = ProductCart.query.filter_by(user_id=user_id).first()
-    if not cart:
-        cart = ProductCart(user_id=user_id)
-        db.session.add(cart)
-        db.session.commit()
 
-    cart_item = CartItem.query.filter_by(product_carts=cart.id, product_id=product_id).first()
+    if not cart:
+        cart = ProductCart(user_id=user_id) #it not, then create a new cart
+        db.session.add(cart)
+
+        cart_item = CartItem(products_cart_id=cart.id, product_id=product_id, quantity=1)
+        db.session.add(cart_item)
+
+    cart_item = CartItem.query.filter_by(products_cart_id=cart.id, product_id=product_id).first()
+
     if cart_item:
         cart_item.quantity += 1
     else:
-        cart_item = CartItem(products_cart=cart.id, product_id=product_id, quantity=1)
+        cart_item = CartItem(products_cart_id=cart.id, product_id=product_id, quantity=1)
         db.session.add(cart_item)
 
-    product.quantity -= 1
     db.session.commit()
 
     flash('Product added to cart.', 'success')
-    return redirect(url_for('products'))
+    return redirect(request.referrer)
 
-
-#pretty sure this is redundant now
-# @bp.route('/cart/checkout', methods=['POST'])
-# @login_required
-# def checkout():
-
-#     user_id = current_user.id
-#     cart = ProductCart.query.filter_by(user_id=user_id).first()
-
-#     if not cart or not cart.cart_items:
-#         flash('Your cart is empty.', 'info')
-#         return redirect(url_for('products'))
-    
-#     # purchase handling goes here
-
-#     return render_template('cart.html', cart=cart)
 
 @bp.route('/remove_item/<int:id>', methods = ['GET','POST'])
 @login_required
@@ -98,7 +83,8 @@ def remove_cart_item(id):
     if request.method == "POST":
         db.session.delete(cart_item)
         db.session.commit()
+
         flash(f"Item successfully deleted from the cart",'success')
-        return redirect(url_for("cart.view_cart"))             
+        return redirect(request.referrer)             
     else:
-        return render_template("cart.html", cart_item = cart_item) 
+        return render_template("cart_extends_base.html", cart_item = cart_item) 
