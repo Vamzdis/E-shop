@@ -6,12 +6,12 @@ class Product(db.Model):
 
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     name = db.Column(db.String(255), nullable = False)
-    description = db.Column(db.String(255), nullable = False)
+    description = db.Column(db.String(500), nullable = False)
     price = db.Column(db.Float, nullable = False)
     picture = db.Column(db.String(255), nullable = False)
     quantity = db.Column(db.Integer, nullable = False)
     rating = db.Column(db.Integer, nullable = True)
-    is_available = db.Column(db.Boolean, default = False, nullable = False)
+    is_available = db.Column(db.Boolean, default = True, nullable = False)
     is_deleted = db.Column(db.Boolean, default = False, nullable = False)
     created_on = db.Column(db.DateTime, default = func.now())
 
