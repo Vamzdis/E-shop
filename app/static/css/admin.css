@@ -1,0 +1,101 @@
+html, body {
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+    max-width: 100vw;
+    height: 100%;
+    margin: 0;
+}
+body {
+    display: flex;
+    flex-direction: column;
+}
+ 
+main {
+    flex: 1;
+}
+ 
+.wrap-text {
+    width: 50%;
+    /* Limit width to 50% of the table */
+    word-wrap: break-word;
+    /* Break words if necessary */
+    white-space: normal;
+    /* Allow wrapping */
+}
+ 
+.nav-bar {
+    padding: 15px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: space-between;
+    align-items: center;
+}
+header {
+    box-shadow: 0 3px 4px 0px #dfdfdf;
+}
+i {
+    margin-right: 6px;
+}
+ 
+main {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+ 
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+ 
+table, th, td {
+    border: 1px solid #ddd;
+}
+ 
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+ 
+th {
+    background-color: #f2f2f2;
+}
+ 
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+ 
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+.user-btns {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-btns {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+}
+footer {
+    background: linear-gradient(180deg, rgba(62,176,202,1) 0%, rgba(0,153,185,1) 50%, rgba(0,124,132,1) 100%);
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+}
+
+.custom-bg main{
+    background-image: url('/static/images/admin.jpeg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    min-height: 100vh;
+    margin: 0;
+}

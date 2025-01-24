@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}{{product.name}}{% endblock %}
+
+{% block content %}
+<section class="container">
+    <div class="row product-summary mt-5">
+        <div class="col-md-6">
+            <div class="product-img">
+                <div class="product-img">
+                    <img src="{{ url_for('static', filename= 'uploads/' ~ product.picture) }}" class="card-img-top" alt="{{ product.name }}">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h2>{{ product.name }}</h2>
+            <div class="product-rating mb-2">
+                <div class="rating-stars">
+                    {% set avg_rating = average_rating | default(0) %}
+                    {% set total_reviews = total_ratings | default(0) %}
+                    
+                    {% for i in range(1, 6) %}
+                        {% if avg_rating >= i %}
+                            <i class="fa fa-star"></i> <!-- Full star -->
+                        {% elif avg_rating > (i - 1) and avg_rating < i %}
+                            <i class="fa fa-star-half-o"></i> <!-- Half star -->
+                        {% else %}
+                            <i class="fa fa-star-o"></i> <!-- Empty star -->
+                        {% endif %}
+                    {% endfor %}
+                    <small>({{ total_reviews }})</small>
+                </div>
+            </div>
+            <div class="mb-3">{{ product.description }}</div>
+            <div class="product-price mb-3">
+                <h3>{{ product.price }} €</h3>
+            </div>
+            <a href="/" class="btn btn-outline-info"><i class="fas fa-chevron-left"></i> Back to Shop</a>
+            {% if current_user.is_authenticated and not current_user.is_admin %}
+                <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#rateProductModal">
+                    <i class="fas fa-star"></i>
+                    {% if user_rating %}
+                        Update Rating
+                    {% else %}
+                        Rate this item
+                    {% endif %}
+                </button>
+            {% endif %}
+        </div>  
+    </div>    
+    <div class="product-reviews mt-4">
+        <h3>Customer Reviews <small>({{ total_ratings }})</small></h3>
+        <p>Product Rating: {{ "%.1f"|format(average_rating) }}/5 ★</p>
+        <p>Total Reviews: {{ total_ratings }}</p>
+        {% if total_ratings > 0 %}
+        <ul class="list-group">
+            {% for rating, user_name in ratings %}
+                <li class="list-group-item">
+                    <strong>{{ user_name }}</strong> 
+                    <span class="text-muted">rated {{ rating.rating }}/5</span> <br>
+                    {% for _ in range(rating.rating|int) %}
+                        <i class="fa fa-star text-warning"></i>
+                    {% endfor %}
+                    {% if rating.rating % 1 != 0 %}
+                        <i class="fa fa-star-half-o text-warning"></i>
+                    {% endif %}
+                    <br>
+                    <small>Rated on: {{ rating.created_on.strftime('%Y-%m-%d') }}</small>
+                </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p>No reviews yet. Be the first to review!</p>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Modal window -->
+<div class="modal fade" id="rateProductModal" tabindex="-1" role="dialog" aria-labelledby="rateProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rateProductModalLabel">Rate: {{ product.name }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <form id="ratingForm" action="{{ url_for('shop.rate_product', id=product.id) }}" method="post">
+                    <div class="form-group text-center">
+                        <label for="rating">Select your rating:</label>
+                        <div class="rating-stars">
+                            {% for i in range(1, 6) %}
+                                <input type="radio" id="star{{ i }}" name="rating" value="{{ i }}"
+                                    {% if user_rating and user_rating.rating == i %} checked {% endif %}
+                                    onclick="setRating({{ i }})">
+                                <label for="star{{ i }}" class="star">
+                                    <i class="fa fa-star"></i>
+                                </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        {% if user_rating %}
+                            Update Rating
+                        {% else %}
+                            Submit Rating
+                        {% endif %}
+                    </button>
+                </form>
+                {% if user_rating %}
+                <form action="{{ url_for('shop.remove_rating', id=product.id) }}" method="post" onsubmit="return confirm('Are you sure you want to remove your rating?');">
+                    <button type="submit" class="btn btn-danger mt-2">Remove Rating</button>
+                </form>
+                {% endif %}
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Žvaigždučių žymėjimas įvertinimui
+    function setRating(rating) {
+        let stars = document.querySelectorAll('.rating-stars label i');
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.classList.add('checked');
+                star.style.color = '#ffcc00';
+            } else {
+                star.classList.remove('checked');
+                star.style.color = '#ddd';
+            }
+        });
+
+        // Pririšam žvaigždutę prie input'o
+        document.querySelectorAll('.rating-stars input').forEach(input => {
+            if (parseInt(input.value) === rating) {
+                input.checked = true;
+            }
+        });
+    }
+
+    // Automatiškai pažymim išsaugotą reitingą atidarant modalą
+    document.addEventListener('DOMContentLoaded', function() {
+        $('#rateProductModal').on('shown.bs.modal', function () {
+            let selectedRating = document.querySelector('input[name="rating"]:checked');
+            if (selectedRating) {
+                setRating(parseInt(selectedRating.value));
+            }
+        });
+    });
+
+
+    // Funkcija reitingo pašalinimui
+    function deleteRating(productId) {
+        if (confirm("Are you sure you want to remove your rating?")) {
+            fetch(`/remove_rating/${productId}`, {
+                method: 'POST',
+            }).then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                    alert('Rating removed successfully.');
+                    location.reload();
+                } else {
+                    alert('Error removing rating.');
+                }
+              }).catch(error => console.error('Error:', error));
+        }
+    }
+    // Neledžiam vertinti nepažymėjus žvaigždučių
+    document.getElementById('ratingForm').addEventListener('submit', function(event) {
+        const selectedRating = document.querySelector('input[name="rating"]:checked');
+        if (!selectedRating) {
+            alert('Please select a rating before submitting!');
+            event.preventDefault();
+        }
+    });
+</script>
+
+{% endblock %}
