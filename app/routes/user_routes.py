@@ -103,6 +103,10 @@ def login():
         password = form.password.data
 
         user = User.query.filter_by(login_email=login_email).first()
+        if not user:
+            flash("No associated acount with the email provided, please register first!", "warning")
+            return render_template('user/user_login_extends_base.html', form = form)
+
         
         if user:
             if user.is_deleted or not user.is_active:
@@ -278,34 +282,39 @@ def pay_for_order(cart_id):
 
         current_user.balance -= total_price
 
-        order = Order(user_id=current_user.id, purchase_price = total_price)
-        
+        # Create an order
+        order = Order(user_id=current_user.id, purchase_price=total_price)
         db.session.add(order)
-        db.session.flush()
-        
+        db.session.flush()  # Ensures `order.id` is available
+
         for cart_item in cart.cart_items:
             product = cart_item.product
             if product.quantity < cart_item.quantity:
                 flash(f"Not enough available units for {product.name}, currently {product.quantity} units left in stock.", "danger")
                 return redirect(request.referrer)
-            
-            product.quantity -= cart_item.quantity
 
+            # Deduct product stock
+            product.quantity -= cart_item.quantity
+            if product.quantity == 0:
+                product.is_available = 0
+
+            # Create an order item
             order_item = OrderItem(order_id=order.id, product_id=product.id, quantity=cart_item.quantity)
             db.session.add(order_item)
-        
+
+        # Delete the cart after processing
         db.session.delete(cart)
 
-        transaction = Transaction(user_id=current_user.id, sum=-total_price, status="Completed", type = "Order payment")
-        
+        # Create a transaction
+        transaction = Transaction(user_id=current_user.id, sum=-total_price, status="Completed", type="Order payment")
         db.session.add(transaction)
         db.session.commit()
-    
+
         flash(f"Successfully paid {total_price}€ for your order!", "success")
-   
+        return redirect(url_for('shop.show'))  # Redirect to a valid page after payment
+
     except Exception as e:
         print(f"Error during payment: {e}")
         flash("An error occurred. Please try again later.", "danger")
-
-        return redirect(url_for('shop.show'))
+        return redirect(url_for('shop.show'))  # Redirect even in case of failure
 
